@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/png">
+        <file>img/vejam_small_h22_blue.png</file>
+        <file>img/vejam_small_h22_green.png</file>
+        <file>img/vejam_small_h22_red.png</file>
+        <file>img/vejam_small_h22_white.png</file>
+        <file>img/vejam_small_h22_yellow.png</file>
+        <file>img/vejam_small_h64_blue.png</file>
+        <file>img/vejam_small_h64_green.png</file>
+        <file>img/vejam_small_h64_red.png</file>
+        <file>img/vejam_small_h64_white.png</file>
+        <file>img/vejam_small_h64_yellow.png</file>
+        <file>img/vejam_toolbar_h48.png</file>
+    </qresource>
+    <qresource prefix="/gif">
+        <file>img/ajax-loader.gif</file>
+    </qresource>
+</RCC>
