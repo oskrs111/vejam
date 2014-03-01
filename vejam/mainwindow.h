@@ -28,6 +28,7 @@ public:
     Q_INVOKABLE QString getUrlDataImage();
     Q_INVOKABLE void showApp(bool show);
     Q_INVOKABLE void startServer();
+    Q_INVOKABLE void setSyncRealm(QString realm);
     Q_INVOKABLE void saveParam(QString groupName, QString paramName, QString paramValue, quint16 order = 0);
     Q_INVOKABLE QString loadParam(QString groupName, QString paramName, quint16 order = 0);
     Q_INVOKABLE bool fileLoad(bool showAlerts);
@@ -54,6 +55,7 @@ private:
     QString m_serverUrl;
     QString m_username;
     QString m_password;
+    QString m_syncRealm;
 
     QImage m_currentFrame;
     QByteArray m_currentBase64Frame;

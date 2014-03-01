@@ -339,7 +339,7 @@ void  MainWindow::setCamera(const QByteArray &cameraDevice)
     this->m_encodeSettings.setQuality((QMultimedia::EncodingQuality)this->loadParam(QString("video"),QString("calidad")).toInt());
 
 	this->m_imageCapture = new QCameraImageCapture(this->m_camera);
-    this->m_imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    this->m_imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);    
     this->m_imageCapture->setEncodingSettings(this->m_encodeSettings);
 
 	qDebug() << "Supported image settings:";
@@ -356,7 +356,7 @@ void  MainWindow::setCamera(const QByteArray &cameraDevice)
 
     this->m_viewfinder = new QCameraViewfinder();
     this->m_camera->setViewfinder(this->m_viewfinder);
-    this->m_camera->setCaptureMode(QCamera::CaptureStillImage);
+    this->m_camera->setCaptureMode(QCamera::CaptureVideo);
     this->m_camera->start();
 }
 
@@ -621,4 +621,9 @@ bool MainWindow::fileSave()
     {
         return this->m_appParameters->fileSave();
     }
+}
+
+void  MainWindow::setSyncRealm(QString realm)
+{
+    this->m_syncRealm = realm;
 }
