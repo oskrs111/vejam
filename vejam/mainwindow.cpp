@@ -34,19 +34,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->m_appParameters = new QtKApplicationParameters(this,QString("vejam"));
     if(this->m_appParameters->fileLoad(false))
-    {
-         if(loadAvaliableCameras())
-		{
-			QMessageBox msgBox;
-			msgBox.setText("Windows dice que no hay camaras disponibles?");
-			msgBox.exec();
-		}		
+    {       
 		this->setDefaultParameters();
+    }
+
+    if(loadAvaliableCameras())
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Windows dice que no hay camaras disponibles?");
+        msgBox.exec();
     }
 
     this->loadAppParameters();
     this->initTrayIcon();
     this->runMachine();
+    this->syncMachine();
 
     QWebFrame* tempFrame = this->ui->webView->page()->mainFrame();
     QObject::connect(tempFrame, SIGNAL(javaScriptWindowObjectCleared()),this, SLOT(addJSObject()));
@@ -215,12 +217,12 @@ void MainWindow::runMachine()
     QThread::msleep(1);
 }
 
-void MainWindow::remoteRegisterMachineSet(int newState)
+void MainWindow::syncMachineSet(int newState)
 {
    this->m_registerState = newState;
 }
 
-void MainWindow::remoteRegisterMachine()
+void MainWindow::syncMachine()
 {
     static int registerTime;
     switch(this->m_registerState)
@@ -241,7 +243,7 @@ void MainWindow::remoteRegisterMachine()
         default: break;
     }
 
-    QTimer::singleShot(APP_RUN_REGISTER_PRESCALER, this, SLOT(runMachine()));
+    QTimer::singleShot(APP_RUN_REGISTER_PRESCALER, this, SLOT(syncMachine()));
     registerTime += 1;
     QThread::msleep(APP_RUN_TIMER_PRESCALER);
 }

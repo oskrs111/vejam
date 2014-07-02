@@ -65,7 +65,7 @@ private:
 
     bool loadAvaliableCameras();
     void runMachineSet(int newState);
-    void remoteRegisterMachineSet(int newState);
+    void syncMachineSet(int newState);
     void setCamera(const QByteArray &cameraDevice);
     void image2Base64();
     QByteArray image2ByteArray();
@@ -107,7 +107,7 @@ private:
 
 public slots:
     void runMachine();
-    void remoteRegisterMachine();
+    void syncMachine();
     void addJSObject();
     void loadStarted();
     void loadProgress(int progress);
