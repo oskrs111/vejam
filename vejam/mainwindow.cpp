@@ -1,12 +1,21 @@
 #include "mainwindow.h"
+#ifdef VEJAM_GUI_QT_TYPE
+#include "ui_mainwindowqt.h"
+#else
 #include "ui_mainwindow.h"
 #include <QtWebKitWidgets>
+#endif
+#include <QMessageBox>
 #include <QBuffer>
 #include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    #ifdef VEJAM_GUI_QT_TYPE
+    ui(new Ui::MainWindowQt)
+    #else
     ui(new Ui::MainWindow)
+#endif
 {
     ui->setupUi(this);   
     qDebug() << "MainWindow::MainWindow()";
@@ -33,21 +42,32 @@ MainWindow::MainWindow(QWidget *parent) :
     */
 
     this->m_appParameters = new QtKApplicationParameters(this,QString("vejam"));
-    if(this->m_appParameters->fileLoad(false))
-    {
-         if(loadAvaliableCameras())
-		{
-			QMessageBox msgBox;
-			msgBox.setText("Windows dice que no hay camaras disponibles?");
-			msgBox.exec();
-		}		
+    if(this->m_appParameters->fileLoad(true))
+    {      
 		this->setDefaultParameters();
     }
+
+	if(loadAvaliableCameras())
+	{
+		QMessageBox msgBox;
+		msgBox.setText("Windows dice que no hay camaras disponibles?");
+		msgBox.exec();
+	}		
 
     this->loadAppParameters();
     this->initTrayIcon();
     this->runMachine();
+	this->syncMachine();
 
+
+#ifdef VEJAM_GUI_QT_TYPE
+
+    this->startServer();
+
+
+
+#else
+	//TODO: Migrar a => Qt WebEngine!!!
     QWebFrame* tempFrame = this->ui->webView->page()->mainFrame();
     QObject::connect(tempFrame, SIGNAL(javaScriptWindowObjectCleared()),this, SLOT(addJSObject()));
     QObject::connect(this->ui->webView, SIGNAL(loadStarted()),this, SLOT(loadStarted()));
@@ -71,8 +91,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     qDebug() << url;    
     this->ui->webView->load(QUrl(url));
-
     qDebug() << "MainWindow::MainWindow(END)";
+#endif
+
+
 }
 
 MainWindow::~MainWindow()
@@ -116,6 +138,7 @@ void MainWindow::runMachine()
     switch(this->m_state)
     {
         case stIdle: break;
+
         case stCapture:
              captureTime = 0;
              this->m_imageReady = false;
@@ -131,69 +154,62 @@ void MainWindow::runMachine()
                     }
                 }
              }
-             break;
+             //Continua a stWaitCapture...
 
         case stWaitCapture:
              if(this->m_imageReady)
              {
                  this->m_state = stBaseEncode;
                  this->m_imageReady = false;
+				 //Continua a stBaseEncode...
              }
              else break;
 
         case stBaseEncode:
              this->image2Base64();
              this->m_state = stSend;
+			 //Continua a stSend...
 
         case stSend:
-             if(!this->isHidden())
-             {
-                emit this->webImageReady();             
+        if(this->isHidden() == false)
+        {
+#ifdef VEJAM_GUI_QT_TYPE            
+            this->ui->videoFrame->setPixmap(QPixmap::fromImage(this->m_currentFrame.scaled(QSize(400,300))));
+            this->ui->videoFrame->show();
+#else
+                emit this->webImageReady();                      
+#endif
              }
-
-             if(this->m_websockServer)
+             switch(this->m_streammingMode)
              {
-                 if(this->m_websockServer->getState() == QtKWebsockServer::stConnected)
-                 {
-                     const char* replyStr = "HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: %d\r\nConnection:close\r\n\r\n";
-                     QByteArray img;
-                     QString reply;
-                     this->m_websockServer->dataSend(this->getUrlDataImage().toUtf8());
-                     this->m_state = stWaitAck;
-/*
-                    switch(this->m_websockServer->getSocketMode())
-                    {
-                        case QtKWebsockServer::modeWebSocket:
-                            this->m_websockServer->dataSend(this->getUrlDataImage().toUtf8());
-                            this->m_state = stWaitAck;
-                            break;
-
-                        case QtKWebsockServer::modeAjaxRequest:
-                            //Si llegamos  aqui es que el navegador esta esperando una imagen.
-                            //Se tiene que sincronizar con el ciclo de capturas de imagenes.
-
-                            img = this->image2ByteArray();
-                            reply.sprintf(replyStr,img.size());
-                            this->m_websockServer->dataSendAjax(reply.toUtf8());
-                            this->m_websockServer->dataSendAjax(img);
-                            this->m_state = stWaitState;
-                            break;
-
-                        default: break;
+                case smodWebKit:
+                if(this->m_websockServer)
+                {
+                     if(this->m_websockServer->getState() == QtKWebsockServer::stConnected)
+                     {                         
+                         this->m_websockServer->dataSend(this->getUrlDataImage().toUtf8());
+                         this->m_state = stWaitAck;
                      }
-*/
-                 }
-                 else
-                 {
-                    this->m_state = stWaitState;
-                 }
-             }            
+                     else
+                     {
+                        this->m_state = stWaitState;
+                     }
+                }
+                break;
+
+                case smodMjpeg:
+                break;
+
+                default:
+                break;
+             }
              break;
 
 
         case stWaitAck:
              //Es controla desde OnDataReceived();
              //this->m_state = stWaitState;
+			 captureTime = 0;
              break;
 
         case stWaitState:
@@ -212,41 +228,10 @@ void MainWindow::runMachine()
 
     QTimer::singleShot(APP_RUN_TIMER_PRESCALER, this, SLOT(runMachine()));
     captureTime += 1;
-    QThread::msleep(1);
+    //QThread::msleep(1);
 }
 
-void MainWindow::remoteRegisterMachineSet(int newState)
-{
-   this->m_registerState = newState;
-}
-
-void MainWindow::remoteRegisterMachine()
-{
-    static int registerTime;
-    switch(this->m_registerState)
-    {
-        case stIdle:
-        case stSendRegister:
-        case stWaitAck:
-        case stGoRegister:
-            if(registerTime < this->m_registerInterval)
-            {
-                break;
-            }
-            else
-            {
-                this->m_state = stSendRegister;
-            }
-            break;
-        default: break;
-    }
-
-    QTimer::singleShot(APP_RUN_REGISTER_PRESCALER, this, SLOT(runMachine()));
-    registerTime += 1;
-    QThread::msleep(APP_RUN_TIMER_PRESCALER);
-}
-
-
+#ifdef VEJAM_GUI_WEBKIT_TYPE
 void MainWindow::loadStarted()
 {
     ui->progressBar->setMaximum(100);
@@ -264,6 +249,10 @@ void MainWindow::loadProgress(int progress)
         this->p_ld->setProgress(progress);
     }
 }
+#else
+void MainWindow::loadStarted(){}
+void MainWindow::loadProgress(int progress){}
+#endif
 
 void MainWindow::loadFinished(bool result)
 {
@@ -275,21 +264,28 @@ void MainWindow::loadFinished(bool result)
     }
 }
 
+#ifdef VEJAM_GUI_WEBKIT_TYPE
 void MainWindow::addJSObject()
 {
     this->ui->webView->page()->mainFrame()->addToJavaScriptWindowObject(QString("vejamApp"), this);
 }
+#else
+void MainWindow::addJSObject(){}
+#endif
 
 void MainWindow::setDefaultParameters()
 {
     this->saveParam(QString("aplicacion"),QString("sync-interval"),QString("3600"));
     this->saveParam(QString("aplicacion"),QString("webkit-debug"),QString("1"));
+    this->saveParam(QString("aplicacion"),QString("streamming-mode"),QString("1")); //1: WebKit, 2: MJPEG
     this->saveParam(QString("aplicacion"),QString("server-url"),QString("www.vejam.info/app-gui")); //http://www.vejam.info/app-gui/app-gui-welcome.html
-    this->saveParam(QString("conexion"),QString("tcpPort"),QString("12345"));
+    this->saveParam(QString("conexion"),QString("webkit-port"),QString("12345"));
+    this->saveParam(QString("conexion"),QString("mjpeg-port"),QString("54321"));
     this->saveParam(QString("video"),QString("resolucion-x"),QString("320"));
     this->saveParam(QString("video"),QString("resolucion-y"),QString("240"));
     this->saveParam(QString("video"),QString("calidad"),QString("0"));
     this->saveParam(QString("video"),QString("framerate-max"),QString("12"));
+    this->saveParam(QString("video"),QString("source-id"),QString("0"));
 	this->saveParam(QString("device"),QString("selected"),QString("1"));	//Indica la camara per defecte.	
     this->fileSave();
 }
@@ -298,6 +294,7 @@ bool MainWindow::loadAvaliableCameras()
 {
   qint16 order = 1;
   struct vjCameraDevice camDevice;
+
   foreach(const QByteArray &deviceName, QCamera::availableDevices())
   {
       camDevice.m_name = deviceName;
@@ -339,7 +336,7 @@ void  MainWindow::setCamera(const QByteArray &cameraDevice)
     this->m_encodeSettings.setQuality((QMultimedia::EncodingQuality)this->loadParam(QString("video"),QString("calidad")).toInt());
 
 	this->m_imageCapture = new QCameraImageCapture(this->m_camera);
-    this->m_imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);    
+    this->m_imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer); //->https://qt-project.org/forums/viewthread/17204
     this->m_imageCapture->setEncodingSettings(this->m_encodeSettings);
 
 	qDebug() << "Supported image settings:";
@@ -366,7 +363,6 @@ void MainWindow::releaseAllocatedPointers()
     if(this->m_imageCapture) delete this->m_imageCapture;
     if(this->m_viewfinder) delete this->m_viewfinder;   
 }
-
 
 void MainWindow::processCapturedImage(int id, QImage image)
 {
@@ -460,24 +456,42 @@ void MainWindow::setTrayIconState(int newState)
 
  void MainWindow::startServer()
  {
-	 this->runMachineSet(stIdle);
-     if(this->m_websockServer) delete this->m_websockServer;
-     this->m_websockServer = new  QtKWebsockServer(this);
-     connect(this->m_websockServer, SIGNAL(socketReset()), this, SLOT(OnSocketReset()));
-     connect(this->m_websockServer, SIGNAL(stateChanged(int)), this, SLOT(OnStateChanged(int)));
-     connect(this->m_websockServer, SIGNAL(dataReceived(QByteArray)), this, SLOT(OnDataReceived(QByteArray)));
-     connect(this->m_websockServer, SIGNAL(dataReceivedAjax(QByteArray)), this, SLOT(OnDataReceivedAjax(QByteArray)));
-     
-	 qint16 v;
-	 QString s;
-     v = this->m_appParameters->loadParam(QString("conexion"),QString("tcpPort"),0).toInt();
-     this->m_websockServer->start(v);
+     qint16 v;
+     QString s;
+
+     this->runMachineSet(stIdle);
+     this->syncMachineSet(sstIdleSync);
+
+     switch(this->m_streammingMode)
+     {
+        case smodWebKit:
+            if(this->m_websockServer) delete this->m_websockServer;
+            this->m_websockServer = new  QtKWebsockServer(this);
+            connect(this->m_websockServer, SIGNAL(socketReset()), this, SLOT(OnSocketReset()));
+            connect(this->m_websockServer, SIGNAL(stateChanged(int)), this, SLOT(OnStateChanged(int)));
+            connect(this->m_websockServer, SIGNAL(dataReceived(QByteArray)), this, SLOT(OnDataReceived(QByteArray)));
+            connect(this->m_websockServer, SIGNAL(dataReceivedAjax(QByteArray)), this, SLOT(OnDataReceivedAjax(QByteArray)));
+            v = this->m_appParameters->loadParam(QString("conexion"),QString("webkit-port"),0).toInt();
+            this->m_websockServer->start(v);
+            break;
+
+        case smodMjpeg:
+            break;
+
+        default:
+         break;
+     }
+
+     qDebug() << "startServer( m_streammingMode= " << this->m_streammingMode << " )";
 
 	 v = this->m_appParameters->loadParam(QString("device"),QString("selected"),0).toInt();
 	 s = this->m_appParameters->loadParam(QString("device"),QString("name"),v);
 	 
+	 this->m_syncInterval = this->m_appParameters->loadParam(QString("aplicacion"),QString("sync-interval"),0).toInt();		 
+	 
 	 this->setCamera(s.toUtf8());        
 	 this->runMachineSet(stCapture);
+     this->syncMachineSet(sstAskForIp);
  }
 
  void MainWindow::OnSocketReset()
@@ -511,19 +525,13 @@ void MainWindow::setTrayIconState(int newState)
          case QtKWebsockServer::stConnected:
              this->setTrayIconState(MainWindow::trClientConnected);
              icon = QSystemTrayIcon::Information;
-			 if(this->m_websockServer->getSocketMode() == QtKWebsockServer::modeWebSocket)
-			 {
-				msg = "Conexión remota establecida!";
-			 }
+			 msg = "Conexión remota establecida!";
              break;
 
          case QtKWebsockServer::stDisconnected:
              this->setTrayIconState(MainWindow::trIdle);
              icon = QSystemTrayIcon::Information;
-			 if(this->m_websockServer->getSocketMode() == QtKWebsockServer::modeWebSocket)
-			 {
-				msg = "Conexión remota finalizada!";
-			 }
+			 msg = "Conexión remota finalizada!";
              break;
 
          case QtKWebsockServer::stError:
@@ -533,9 +541,6 @@ void MainWindow::setTrayIconState(int newState)
              msg = "Error!";
              break;
      }
-
-	  
-                    
 
 	 if(msg.size()) this->m_trayIcon->showMessage(QString("VEJAM Info:"),msg,icon);
  }
@@ -569,15 +574,17 @@ void MainWindow::loadAppParameters()
     data = this->loadParam(QString("aplicacion"),QString("register-interval")).toInt();
     if(data)
     {
-        this->m_registerInterval = data;
+        this->m_syncInterval = data;
     }
 
+#ifdef VEJAM_GUI_WEBKIT_TYPE
     if(!this->loadParam(QString("aplicacion"),QString("webkit-debug")).compare("1"))
     {
         QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     }
-
+#endif
     this->m_serverUrl = this->loadParam(QString("aplicacion"),QString("server-url"));
+    this->m_streammingMode = this->loadParam(QString("aplicacion"),QString("streamming-mode")).toInt();
 
     if(!this->loadParam(QString("aplicacion"),QString("auto-start")).compare("1"))
     {
@@ -586,7 +593,6 @@ void MainWindow::loadAppParameters()
         this->m_password = this->loadParam(QString("aplicacion"),QString("password"));
     }
     else this->m_autoStart = false;
-
 }
 
 
@@ -605,6 +611,8 @@ QString MainWindow::loadParam(QString groupName, QString paramName, quint16 orde
     {
         return this->m_appParameters->loadParam(groupName, paramName, order);
     }
+
+	return 0;
 }
 
 bool MainWindow::fileLoad(bool showAlerts)
@@ -613,6 +621,8 @@ bool MainWindow::fileLoad(bool showAlerts)
     {
         return this->m_appParameters->fileLoad(showAlerts);
     }
+
+	return false;
 }
 
 bool MainWindow::fileSave()
@@ -621,9 +631,6 @@ bool MainWindow::fileSave()
     {
         return this->m_appParameters->fileSave();
     }
-}
 
-void  MainWindow::setSyncRealm(QString realm)
-{
-    this->m_syncRealm = realm;
+	return false;
 }

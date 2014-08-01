@@ -13,7 +13,6 @@ QtKWebsockServer::QtKWebsockServer( QObject *parent) :
     this->m_lastError = 0;
     this->m_socket = 0;
 	this->m_socket2delete = 0;
-    this->m_socketMode = modeUnknown;
     this->m_lastErrorDescription = "no error";
 }
 
@@ -211,9 +210,7 @@ void QtKWebsockServer::OnReadyRead()
     }
 
     qDebug() << "QtKWebsockServer::OnReadyRead("<< r <<")";
-    switch(this->m_socketMode)
-    {
-        case modeWebSocket:
+
             struct webSocketFrameBase* inFrame;
             char* d;
             inFrame =(struct webSocketFrameBase*)r.data();
@@ -223,15 +220,6 @@ void QtKWebsockServer::OnReadyRead()
                 f.append(d);
                 emit this->dataReceived(f);
             }
-            break;
-/*
-        case modeAjaxRequest:
-             //Nada que hacer aqui...
-             break;
-*/
-
-        default: break;
-    }
 }
 
 /*
@@ -266,11 +254,6 @@ void QtKWebsockServer::processHttpHeader(QByteArray dataReceived)
     }
 }
 */
-
-int QtKWebsockServer::getSocketMode()
-{
-    return this->m_socketMode;
-}
 
 QByteArray QtKWebsockServer::getHTTPData(QByteArray dataReceived)
 {

@@ -7,16 +7,25 @@
 #include <QCameraViewfinder>
 #include <QSystemTrayIcon>
 #include <QImageEncoderSettings>
+#include <QtNetwork>
 #include "loadingdialog.h"
 #include "qtkwebsockserver.h"
 #include "qtkapplicationparameters.h"
 
+#define VEJAM_GUI_WEBKIT_TYPE
+
+#ifdef VEJAM_GUI_QT_TYPE
+namespace Ui {
+class MainWindowQt;
+}
+#else
 namespace Ui {
 class MainWindow;
 }
+#endif
 
 #define APP_RUN_TIMER_PRESCALER 20  //ms
-#define APP_RUN_REGISTER_PRESCALER 1000 //ms
+#define APP_RUN_SYNC_PRESCALER 1000 //ms
 
 class MainWindow : public QMainWindow
 {
@@ -28,7 +37,6 @@ public:
     Q_INVOKABLE QString getUrlDataImage();
     Q_INVOKABLE void showApp(bool show);
     Q_INVOKABLE void startServer();
-    Q_INVOKABLE void setSyncRealm(QString realm);
     Q_INVOKABLE void saveParam(QString groupName, QString paramName, QString paramValue, quint16 order = 0);
     Q_INVOKABLE QString loadParam(QString groupName, QString paramName, quint16 order = 0);
     Q_INVOKABLE bool fileLoad(bool showAlerts);
@@ -48,24 +56,29 @@ private:
     bool m_autoStart;
 
     int m_state;
-    int m_registerState;
+    int m_syncState;
     int m_frameInterval;
-    int m_registerInterval;
+    int m_syncInterval;
+    int m_streammingMode;
 
     QString m_serverUrl;
     QString m_username;
     QString m_password;
-    QString m_syncRealm;
+    QString m_lastIpReply;
 
     QImage m_currentFrame;
     QByteArray m_currentBase64Frame;
+#ifdef VEJAM_GUI_QT_TYPE
+    Ui::MainWindowQt *ui;
+#else
     Ui::MainWindow *ui;
+#endif
     loadingDialog* p_ld;
     QList <struct vjCameraDevice> m_devices;
 
     bool loadAvaliableCameras();
     void runMachineSet(int newState);
-    void remoteRegisterMachineSet(int newState);
+    void syncMachineSet(int newState);
     void setCamera(const QByteArray &cameraDevice);
     void image2Base64();
     QByteArray image2ByteArray();
@@ -75,6 +88,7 @@ private:
     void changeEvent(QEvent *e);
     void setDefaultParameters();
     void loadAppParameters();
+	QString getSyncString();
 
     enum runStates
     {
@@ -84,15 +98,22 @@ private:
         stBaseEncode,
         stSend,
         stWaitAck,
+        stWaitAckDone,
         stWaitState
     };
 
-    enum registerStates
+    enum syncStates
     {
-        stIdleRegister = 0,
-        stSendRegister,
-        stWaitAckRegister,
-        stGoRegister
+        sstIdleSync = 0,
+        sstGoSync,
+        sstSyncWait,
+        sstAskForIp,
+        sstWaitForIp,
+        sstWaitForIpDone,
+        sstSendSync,
+        sstWaitSyncAck,
+        sstWaitSyncAckDone,
+        sstSyncError
     };
 
 
@@ -105,9 +126,16 @@ private:
         trError
     };
 
+    enum streammingModes
+    {
+        smodNone = 0,
+        smodWebKit,
+        smodMjpeg
+    };
+
 public slots:
     void runMachine();
-    void remoteRegisterMachine();
+    void syncMachine();
     void addJSObject();
     void loadStarted();
     void loadProgress(int progress);
@@ -117,6 +145,8 @@ public slots:
     void updateCameraState(QCamera::State state);
     void displayCameraError(QCamera::Error error);
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void syncAckReply(QNetworkReply* reply);
+    void askForIpReply(QNetworkReply* reply);
 
     void OnSocketReset();
     void OnStateChanged(int newState);

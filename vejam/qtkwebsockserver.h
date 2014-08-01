@@ -86,8 +86,7 @@ public:
     void forceConnectionClose();
 
     void dataSend(QByteArray data);
-    void dataSendAjax(QByteArray data);
-    int getSocketMode();
+    void dataSendAjax(QByteArray data);    
 
     enum serverStates
     {
@@ -99,27 +98,17 @@ public:
         stError
     };
 
-    enum socketMode
-    {
-        modeUnknown = 0,
-        modeWebSocket
-//        modeAjaxRequest
-    };
-
-
 private:
     int m_serverState;
     int m_handshakeState;
-    int m_lastError;
-    int m_socketMode;
+    int m_lastError;   
     QString m_lastErrorDescription;
     QTcpServer* m_server;
     QTcpSocket* m_socket;
 	QTcpSocket* m_socket2delete;
     QByteArray m_lastHttpRequest;
     QMap<QByteArray, QByteArray> m_lastHttpHeaders;
-
-    //void processHttpHeader(QByteArray dataReceived);
+    
     QByteArray getHTTPData(QByteArray dataReceived);
     char* getUnmaskedWebSocketPayload(struct webSocketFrameBase* inFrame);
     QByteArray getSecWebSocketAccept(QByteArray httpHeaderBuffer);

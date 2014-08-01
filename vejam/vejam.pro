@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT += core gui
+QT += multimedia multimediawidgets #webkitwidgets
 QT += webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -17,7 +18,8 @@ SOURCES += main.cpp\
         mainwindow.cpp \
         qtkwebsockserver.cpp \
     qtkapplicationparameters.cpp \
-    loadingdialog.cpp
+    loadingdialog.cpp \
+    syncmachine.cpp
 
 HEADERS  += mainwindow.h \
     qtkwebsockserver.h \

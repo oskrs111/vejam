@@ -99,6 +99,9 @@
     <ClCompile Include="Debug\moc_loadingdialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="syncmachine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="mainwindow.h">
@@ -167,5 +170,15 @@
     <ClInclude Include="GeneratedFiles\ui_loadingdialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vejam.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="icon1.ico" />
+    <None Include="..\..\CLOUD-SYNC\OSCAR\VEJAM\GRAPHICS\vejam_toolbar_h48.ico" />
   </ItemGroup>
 </Project>
