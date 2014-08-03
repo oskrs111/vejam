@@ -59,8 +59,8 @@ private:
     int m_syncState;
     int m_frameInterval;
     int m_syncInterval;
-    int m_streammingMode;
-
+	int m_streammingMode;
+    
     QString m_serverUrl;
     QString m_username;
     QString m_password;
@@ -77,8 +77,7 @@ private:
     QList <struct vjCameraDevice> m_devices;
 
     bool loadAvaliableCameras();
-    void runMachineSet(int newState);
-    void syncMachineSet(int newState);
+    void runMachineSet(int newState);    
     void setCamera(const QByteArray &cameraDevice);
     void image2Base64();
     QByteArray image2ByteArray();
@@ -88,7 +87,12 @@ private:
     void changeEvent(QEvent *e);
     void setDefaultParameters();
     void loadAppParameters();
+	
+	//syncmachine.cpp!
+	void syncMachineSet(int newState);
 	QString getSyncString();
+	QByteArray getEncryptedString(QString cleanText, QString password);
+
 
     enum runStates
     {

@@ -59,9 +59,9 @@ void MainWindow::syncMachine()
             url += this->m_serverUrl;
             url += "/app-user-sync.php?vejamSync=1";
             url += "&userName=";
-            url +=  this->loadParam(QString("aplicacion"),QString("username"));            
+            url += this->loadParam(QString("aplicacion"),QString("username"));            
 			url += "&sourceId=";
-            url +=  this->loadParam(QString("video"),QString("source-id"));            
+            url += this->loadParam(QString("aplicacion"),QString("streamming-id"));
             url += "&syncData=";
             url += this->getSyncString();   
 			url += "&syncEncript=0";				
@@ -111,6 +111,59 @@ QString MainWindow::getSyncString()
     QString syncStr(jsonDoc.toJson().toBase64());
 
     return syncStr;
+}
+
+QByteArray MainWindow::getEncryptedString(QString cleanText, QString password)
+//http://www.essentialunix.org/index.php?option=com_content&view=article&id=48:qcatutorial&catid=34:qttutorials&Itemid=53
+//https://github.com/JPNaude/dev_notes/wiki/Using-the-Qt-Cryptographic-Architecture-with-Qt5
+{
+    //initialize QCA
+    QCA::Initializer init = QCA::Initializer();
+    //generate a random symmetric 16-bytes key
+    QCA::SymmetricKey key = QCA::SymmetricKey(16);
+    //generate a random 16-bytes initialization vector
+    QCA::InitializationVector iv = QCA::InitializationVector(16);
+    //initialize the cipher for aes128 algorithm, using CBC mode,
+    //with padding enabled (by default), in encoding mode,
+    //using the given key and initialization vector
+    QCA::Cipher cipher = QCA::Cipher(QString("aes128"), QCA::Cipher::CBC,
+                                     QCA::Cipher::DefaultPadding, QCA::Encode,
+                                     key, iv);
+    //check if aes128 is available
+    if (!QCA::isSupported("aes128-cbc-pkcs7"))
+    {
+        qDebug() << "AES128 CBC PKCS7 not supported - "
+                    "please check if qca-ossl plugin"
+                    "installed correctly !";
+        return;
+    }
+    //the string we want to encrypt
+    QString s = "Hello, world !";
+    //we use SecureArray: read more here:
+    //QCA secure array details
+    QCA::SecureArray secureData = s.toAscii();
+    //we encrypt the data
+    QCA::SecureArray encryptedData = cipher.process(secureData);
+    //check if encryption succeded
+    if (!cipher.ok())
+    {
+        qDebug() << "Encryption failed !";
+        return;
+    }
+    //display the result
+    qDebug() << QString(qPrintable(QCA::arrayToHex(encryptedData.toByteArray())));
+    //set the cipher mode to encryption
+    cipher.setup(QCA::Decode, key, iv);
+    //decrypt the encrypted data
+    QCA::SecureArray decryptedData = cipher.process(encryptedData);
+    //check if decryption succeded
+    if (!cipher.ok())
+    {
+        qDebug() << "Decryption failed !";
+        return "";
+    }
+    //display the decrypted data (it should be "Hello, world !")
+    qDebug() << QString(decryptedData.data());
 }
 
 void MainWindow::askForIpReply(QNetworkReply* reply)
