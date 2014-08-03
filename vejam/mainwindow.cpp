@@ -42,9 +42,12 @@ MainWindow::MainWindow(QWidget *parent) :
     */
 
     this->m_appParameters = new QtKApplicationParameters(this,QString("vejam"));
-    if(this->m_appParameters->fileLoad(true))
+    if(this->m_appParameters->fileLoad(false))
     {      
 		this->setDefaultParameters();
+		 QMessageBox msgBox;                  
+         msgBox.setText("vejam.cfg not found!\r\nSetting default configuration.");
+         msgBox.exec();
     }
 
 	if(loadAvaliableCameras())
@@ -278,14 +281,14 @@ void MainWindow::setDefaultParameters()
     this->saveParam(QString("aplicacion"),QString("sync-interval"),QString("3600"));
     this->saveParam(QString("aplicacion"),QString("webkit-debug"),QString("1"));
     this->saveParam(QString("aplicacion"),QString("streamming-mode"),QString("1")); //1: WebKit, 2: MJPEG
-    this->saveParam(QString("aplicacion"),QString("server-url"),QString("www.vejam.info/app-gui")); //http://www.vejam.info/app-gui/app-gui-welcome.html
+	this->saveParam(QString("aplicacion"),QString("streamming-id"),QString("0")); //1: WebKit, 2: MJPEG    
+	this->saveParam(QString("aplicacion"),QString("server-url"),QString("www.vejam.info/app-gui")); //http://www.vejam.info/app-gui/app-gui-welcome.html
     this->saveParam(QString("conexion"),QString("webkit-port"),QString("12345"));
     this->saveParam(QString("conexion"),QString("mjpeg-port"),QString("54321"));
     this->saveParam(QString("video"),QString("resolucion-x"),QString("320"));
     this->saveParam(QString("video"),QString("resolucion-y"),QString("240"));
     this->saveParam(QString("video"),QString("calidad"),QString("0"));
-    this->saveParam(QString("video"),QString("framerate-max"),QString("12"));
-    this->saveParam(QString("video"),QString("source-id"),QString("0"));
+    this->saveParam(QString("video"),QString("framerate-max"),QString("12"));    
 	this->saveParam(QString("device"),QString("selected"),QString("1"));	//Indica la camara per defecte.	
     this->fileSave();
 }
@@ -462,6 +465,8 @@ void MainWindow::setTrayIconState(int newState)
      this->runMachineSet(stIdle);
      this->syncMachineSet(sstIdleSync);
 
+	 this->loadAppParameters();
+
      switch(this->m_streammingMode)
      {
         case smodWebKit:
@@ -487,7 +492,7 @@ void MainWindow::setTrayIconState(int newState)
 	 v = this->m_appParameters->loadParam(QString("device"),QString("selected"),0).toInt();
 	 s = this->m_appParameters->loadParam(QString("device"),QString("name"),v);
 	 
-	 this->m_syncInterval = this->m_appParameters->loadParam(QString("aplicacion"),QString("sync-interval"),0).toInt();		 
+	 //this->m_syncInterval = this->m_appParameters->loadParam(QString("aplicacion"),QString("sync-interval"),0).toInt();		 
 	 
 	 this->setCamera(s.toUtf8());        
 	 this->runMachineSet(stCapture);
@@ -585,7 +590,7 @@ void MainWindow::loadAppParameters()
 #endif
     this->m_serverUrl = this->loadParam(QString("aplicacion"),QString("server-url"));
     this->m_streammingMode = this->loadParam(QString("aplicacion"),QString("streamming-mode")).toInt();
-
+	
     if(!this->loadParam(QString("aplicacion"),QString("auto-start")).compare("1"))
     {
         this->m_autoStart = true;
