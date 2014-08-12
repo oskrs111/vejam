@@ -5,6 +5,7 @@
 #include "ui_mainwindow.h"
 #include <QtWebKitWidgets>
 #endif
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QBuffer>
 #include <QUrl>
@@ -190,8 +191,15 @@ void MainWindow::runMachine()
                 {
                      if(this->m_websockServer->getState() == QtKWebsockServer::stConnected)
                      {                         
-                         this->m_websockServer->dataSend(this->getUrlDataImage().toUtf8());
-                         this->m_state = stWaitAck;
+						QJsonObject json;
+						QString enc64;
+						json.insert("frame",QJsonValue(this->getUrlDataImage()));
+						json.insert("frame-size",QJsonValue(this->getUrlDataImage().size()));
+						
+						QJsonDocument jsonDoc(json);
+						this->m_websockServer->dataSend(QString(jsonDoc.toJson(QJsonDocument::Compact)).toUtf8());					 
+						//this->m_websockServer->dataSend(this->getUrlDataImage().toUtf8());
+                        this->m_state = stWaitAck;
                      }
                      else
                      {
@@ -281,14 +289,14 @@ void MainWindow::setDefaultParameters()
     this->saveParam(QString("aplicacion"),QString("sync-interval"),QString("3600"));
     this->saveParam(QString("aplicacion"),QString("webkit-debug"),QString("1"));
     this->saveParam(QString("aplicacion"),QString("streamming-mode"),QString("1")); //1: WebKit, 2: MJPEG
-	this->saveParam(QString("aplicacion"),QString("streamming-id"),QString("0")); //1: WebKit, 2: MJPEG    
+	this->saveParam(QString("aplicacion"),QString("streamming-id"),QString("0")); //1...8
 	this->saveParam(QString("aplicacion"),QString("server-url"),QString("www.vejam.info/app-gui")); //http://www.vejam.info/app-gui/app-gui-welcome.html
     this->saveParam(QString("conexion"),QString("webkit-port"),QString("12345"));
     this->saveParam(QString("conexion"),QString("mjpeg-port"),QString("54321"));
     this->saveParam(QString("video"),QString("resolucion-x"),QString("320"));
     this->saveParam(QString("video"),QString("resolucion-y"),QString("240"));
-    this->saveParam(QString("video"),QString("calidad"),QString("0"));
-    this->saveParam(QString("video"),QString("framerate-max"),QString("12"));    
+    this->saveParam(QString("video"),QString("calidad"),QString("-1"));
+    this->saveParam(QString("video"),QString("framerate-max"),QString("6"));    
 	this->saveParam(QString("device"),QString("selected"),QString("1"));	//Indica la camara per defecte.	
     this->fileSave();
 }
@@ -333,7 +341,9 @@ void  MainWindow::setCamera(const QByteArray &cameraDevice)
   
 	
 	this->m_encodeSettings.setCodec("image/jpeg");
-    this->m_encodeSettings.setResolution(this->loadParam(QString("video"),QString("resolucion-x")).toInt(),
+    
+	//NOTA: Esto en Qt5.3 no funciona... se implementa en QImage
+	this->m_encodeSettings.setResolution(this->loadParam(QString("video"),QString("resolucion-x")).toInt(),
                                          this->loadParam(QString("video"),QString("resolucion-y")).toInt());
 
     this->m_encodeSettings.setQuality((QMultimedia::EncodingQuality)this->loadParam(QString("video"),QString("calidad")).toInt());
@@ -383,7 +393,13 @@ void MainWindow::image2Base64()
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QBuffer::WriteOnly);
-    this->m_currentFrame.save( &buffer, "JPG", -1);
+
+	/*
+	this->m_encodeSettings.setResolution(this->loadParam(QString("video"),QString("resolucion-x")).toInt(),
+                                         this->loadParam(QString("video"),QString("resolucion-y")).toInt());
+										 */
+
+    this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());
     this->m_currentBase64Frame = ba.toBase64();
     buffer.close();
 }
@@ -393,7 +409,8 @@ QByteArray MainWindow::image2ByteArray()
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QBuffer::WriteOnly);
-    this->m_currentFrame.save( &buffer, "JPG", -1);
+    //this->m_currentFrame.save( &buffer, "JPG", -1);
+	this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());
     buffer.close();
     return ba;
 }
@@ -553,11 +570,30 @@ void MainWindow::setTrayIconState(int newState)
 void MainWindow::OnDataReceived(QByteArray data)
 {
     qDebug() << "OnDataReceived(" << data << ")";
-    if(data.at(0)=='#')
-    {
-        //qDebug() << data;
-        this->runMachineSet(stWaitState);
-    }
+    
+	
+	QJsonDocument jsonDoc;
+	QJsonObject json;
+	
+	jsonDoc = QJsonDocument::fromJson(data);
+	if(jsonDoc.isObject())
+	{
+		json = jsonDoc.object();
+
+		if( json.value(QString("ack")).toString().compare("ok") == 0 )
+		{
+			this->runMachineSet(stWaitState);
+		}
+		
+		//TODO: Remote settings setup...
+	}
+
+	
+//	if(data.at(0)=='#')
+//    {
+//        //qDebug() << data;
+//        this->runMachineSet(stWaitState);
+//    }
 }
 
 void MainWindow::OnDataReceivedAjax(QByteArray data)
