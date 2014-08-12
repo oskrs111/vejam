@@ -209,7 +209,7 @@ void QtKWebsockServer::OnReadyRead()
         }
     }
 
-    qDebug() << "QtKWebsockServer::OnReadyRead("<< r <<")";
+    //qDebug() << "QtKWebsockServer::OnReadyRead("<< r <<")";
 
             struct webSocketFrameBase* inFrame;
             char* d;

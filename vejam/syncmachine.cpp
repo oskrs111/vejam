@@ -1,5 +1,4 @@
-#include <QJsonObject>
-#include "mainwindow.h"
+//#include "mainwindow.h"
 
 void MainWindow::syncMachineSet(int newState)
 {   
