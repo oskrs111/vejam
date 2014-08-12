@@ -46,17 +46,20 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{94d17b52-0d0c-4524-b855-6ec49a49bb07}</UniqueIdentifier>
+      <UniqueIdentifier>{38f152ee-c541-4ae8-b70a-fd7ffa34d742}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{9f5d844c-a1df-42c2-b16c-a8aa46f8b798}</UniqueIdentifier>
+      <UniqueIdentifier>{1bfaeab9-7819-4a7c-9a32-8249609bd1b0}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="loadingdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,6 +71,12 @@
     </ClCompile>
     <ClCompile Include="qtkwebsockserver.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_loadingdialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_loadingdialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Release\moc_mainwindow.cpp">
       <Filter>Generated Files\Release</Filter>
@@ -90,20 +99,11 @@
     <ClCompile Include="GeneratedFiles\qrc_vejam.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="loadingdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_loadingdialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_loadingdialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="syncmachine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="loadingdialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="mainwindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -113,19 +113,19 @@
     <CustomBuild Include="qtkwebsockserver.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="loadingdialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="loadingdialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="mainwindow.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="img\ajax-loader.gif">
+      <Filter>Resource Files</Filter>
+    </None>
     <CustomBuild Include="vejam.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -164,21 +164,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_loadingdialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="vejam.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="icon1.ico" />
-    <None Include="..\..\CLOUD-SYNC\OSCAR\VEJAM\GRAPHICS\vejam_toolbar_h48.ico" />
   </ItemGroup>
 </Project>

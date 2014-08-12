@@ -1,5 +1,6 @@
 #include <QJsonObject>
 #include "mainwindow.h"
+
 void MainWindow::syncMachineSet(int newState)
 {   
    qDebug() << "MainWindow::syncMachineSet(" << newState  << ")";
@@ -64,7 +65,7 @@ void MainWindow::syncMachine()
             url += this->loadParam(QString("aplicacion"),QString("streamming-id"));
             url += "&syncData=";
             url += this->getSyncString();   
-			url += "&syncEncript=0";				
+			url += "&syncEncript=1";				
             manager = new QNetworkAccessManager(this);
             connect(manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(syncAckReply(QNetworkReply*)));
             manager->get(QNetworkRequest(QUrl(url)));
@@ -101,6 +102,8 @@ QString MainWindow::getSyncString()
 //JSON Base64 encoded string.
 {    
     QJsonObject json;
+    QString enc64;
+
 
     json.insert("server-ip",QJsonValue(this->m_lastIpReply));
     json.insert("webkit-port",QJsonValue(this->loadParam(QString("conexion"),QString("webkit-port"))));
@@ -108,63 +111,74 @@ QString MainWindow::getSyncString()
     json.insert("streamming-mode",QJsonValue(this->loadParam(QString("aplicacion"),QString("streamming-mode"))));
 
     QJsonDocument jsonDoc(json);
-    QString syncStr(jsonDoc.toJson().toBase64());
-
-    return syncStr;
+    
+    enc64 = this->getEncryptedString(QString(jsonDoc.toJson(QJsonDocument::Compact)), this->loadParam(QString("aplicacion"),QString("password")));
+    //enc64 = this->getEncryptedString(QString("hola"), this->m_password);    
+	enc64.remove("\r");		//Pol que tiene que pasar esto...?
+	enc64.remove("\n");		//Pol que tiene que pasar esto...?
+	enc64.replace("+","%2B"); //URL-encoded, para poder utilizarlo como parametro del GET!
+    return enc64;
 }
 
+#include <QVariant>
+QString MainWindow::getEncryptedString(QString cleanText, QString password)
+//...Bueno vale es un poco raruzo hacerlo asin pero esto me asegura 100% de compatibilidad con la decodificación
+//en el lado del cliente... Cuando encuentre como hacelo con OpenSSL + Alguna libreria JAVASCRIPT lo hare!
+{
+	QVariant result;
+	QString jeval("doEncrypt('");
+	jeval += cleanText;
+	jeval += "','";
+	jeval += password;
+	jeval += "')";
+
+	result = this->ui->webView->page()->mainFrame()->evaluateJavaScript(jeval); 
+	return result.toString();	
+	//return result.toByteArray();
+}
+
+
+/*
+#include <openssl/aes.h>
 QByteArray MainWindow::getEncryptedString(QString cleanText, QString password)
 //http://www.essentialunix.org/index.php?option=com_content&view=article&id=48:qcatutorial&catid=34:qttutorials&Itemid=53
 //https://github.com/JPNaude/dev_notes/wiki/Using-the-Qt-Cryptographic-Architecture-with-Qt5
+//http://stackoverflow.com/questions/14681012/how-to-include-openssl-in-a-qt-project
+//http://stackoverflow.com/questions/9889492/how-to-do-encryption-using-aes-in-openssl
 {
-    //initialize QCA
-    QCA::Initializer init = QCA::Initializer();
-    //generate a random symmetric 16-bytes key
-    QCA::SymmetricKey key = QCA::SymmetricKey(16);
-    //generate a random 16-bytes initialization vector
-    QCA::InitializationVector iv = QCA::InitializationVector(16);
-    //initialize the cipher for aes128 algorithm, using CBC mode,
-    //with padding enabled (by default), in encoding mode,
-    //using the given key and initialization vector
-    QCA::Cipher cipher = QCA::Cipher(QString("aes128"), QCA::Cipher::CBC,
-                                     QCA::Cipher::DefaultPadding, QCA::Encode,
-                                     key, iv);
-    //check if aes128 is available
-    if (!QCA::isSupported("aes128-cbc-pkcs7"))
-    {
-        qDebug() << "AES128 CBC PKCS7 not supported - "
-                    "please check if qca-ossl plugin"
-                    "installed correctly !";
-        return;
-    }
-    //the string we want to encrypt
-    QString s = "Hello, world !";
-    //we use SecureArray: read more here:
-    //QCA secure array details
-    QCA::SecureArray secureData = s.toAscii();
-    //we encrypt the data
-    QCA::SecureArray encryptedData = cipher.process(secureData);
-    //check if encryption succeded
-    if (!cipher.ok())
-    {
-        qDebug() << "Encryption failed !";
-        return;
-    }
-    //display the result
-    qDebug() << QString(qPrintable(QCA::arrayToHex(encryptedData.toByteArray())));
-    //set the cipher mode to encryption
-    cipher.setup(QCA::Decode, key, iv);
-    //decrypt the encrypted data
-    QCA::SecureArray decryptedData = cipher.process(encryptedData);
-    //check if decryption succeded
-    if (!cipher.ok())
-    {
-        qDebug() << "Decryption failed !";
-        return "";
-    }
-    //display the decrypted data (it should be "Hello, world !")
-    qDebug() << QString(decryptedData.data());
+    QByteArray enc_out;
+    QByteArray enc_res;
+    unsigned char* key = 0;
+    unsigned char* data = 0;
+    unsigned char* out = 0;
+    unsigned char* res = 0;
+    unsigned char iv[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+
+    enc_out.resize(cleanText.size() + (2*AES_BLOCK_SIZE));
+    enc_out.fill(0x00);
+
+    enc_res.resize(cleanText.size() + (2*AES_BLOCK_SIZE));
+    enc_res.fill(0x00);
+
+
+    key  = (unsigned char*)password.data();
+    data = (unsigned char*)cleanText.data();
+    out  = (unsigned char*)enc_out.data();
+    res  = (unsigned char*)enc_res.data();
+
+
+    AES_KEY enc_key;
+    AES_KEY dec_key;
+    AES_set_encrypt_key(key, 128, &enc_key);
+	AES_encrypt(data, out, &enc_key);
+	//AES_cbc_encrypt(data, out, password.size(), &enc_key, iv, 0);
+
+    AES_set_decrypt_key(key, 128, &dec_key);
+    AES_decrypt(out, res, &dec_key);
+
+    return enc_out.toBase64();
 }
+*/
 
 void MainWindow::askForIpReply(QNetworkReply* reply)
 {

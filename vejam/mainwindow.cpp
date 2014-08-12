@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->webView, SIGNAL(loadFinished(bool)),this, SLOT(loadFinished(bool)));
 
     QString url = "http://";
-    url += this->m_serverUrl;
+    url += this->m_serverUrl;	
 
     if(this->m_autoStart)
     {
@@ -639,3 +639,7 @@ bool MainWindow::fileSave()
 
 	return false;
 }
+
+//Q:Uy! y esto?...
+//A:Bueno partimos el archivo para que no sea tan grande.. y evitamos también algunos problemas raros de compilacion... no se.. yo soy asin...
+#include "syncmachine.cpp"

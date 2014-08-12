@@ -13,6 +13,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = vejam
 TEMPLATE = app
 
+LIBS += -LC:/OpenSSL-Win32/lib -llibeay32
+INCLUDEPATH += C:/OpenSSL-Win32/include
 
 SOURCES += main.cpp\
         mainwindow.cpp \
