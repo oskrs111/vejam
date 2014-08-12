@@ -91,7 +91,7 @@ private:
 	//syncmachine.cpp!
 	void syncMachineSet(int newState);
 	QString getSyncString();
-	QByteArray getEncryptedString(QString cleanText, QString password);
+	QString getEncryptedString(QString cleanText, QString password);
 
 
     enum runStates
