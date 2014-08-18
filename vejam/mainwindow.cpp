@@ -5,10 +5,13 @@
 #include "ui_mainwindow.h"
 #include <QtWebKitWidgets>
 #endif
+#include <QProcess>
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QBuffer>
 #include <QUrl>
+
+#define VEJAM_APP_VERSION "1.0"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->m_trayIcon = 0;
     this->m_websockServer = 0;
     this->p_ld = 0;
+	this->p_manager = 0;
 
     /*
     Qt::WindowFlags flags = 0;
@@ -674,6 +678,51 @@ bool MainWindow::fileSave()
     }
 
 	return false;
+}
+
+QString MainWindow::getVersion()
+{
+	return QString(VEJAM_APP_VERSION);
+}
+
+bool MainWindow::wGetFile(QString url)
+{
+	if(this->p_manager) this->p_manager->deleteLater();
+
+	this->p_manager = new QNetworkAccessManager(this);
+	connect(this->p_manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(OnwGetfileDone(QNetworkReply*)));
+ 
+	this->p_manager->get(QNetworkRequest(QUrl(url)));
+
+	return true;
+}
+
+bool MainWindow::wSysExec(QString sysExec)
+{
+	this->m_sysExec = sysExec;
+	return true;
+}
+
+void MainWindow::OnwGetfileDone(QNetworkReply* reply)
+{
+	QByteArray data;
+	data = reply->readAll();
+
+	if(data.size())
+	{
+		QFile file("updater.exe");
+		file.open(QIODevice::OpenModeFlag::WriteOnly);
+		file.write(data);
+		file.close();
+		
+		if(this->m_sysExec.size() > 0)
+		{
+			QProcess::execute(this->m_sysExec);
+			this->m_sysExec.clear();
+			//Lanzamos un proceso de instalación que sobrescribe este ejecutable asi que... tenemos que salir ;-)
+			this->close();
+		}
+	}
 }
 
 //Q:Uy! y esto?...

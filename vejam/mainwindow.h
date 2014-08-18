@@ -41,7 +41,10 @@ public:
     Q_INVOKABLE QString loadParam(QString groupName, QString paramName, quint16 order = 0);
     Q_INVOKABLE bool fileLoad(bool showAlerts);
     Q_INVOKABLE bool fileSave();
-
+	Q_INVOKABLE QString getVersion();
+	Q_INVOKABLE bool wGetFile(QString url);
+	Q_INVOKABLE bool wSysExec(QString sysExec);
+	
 private:
     QtKApplicationParameters* m_appParameters;
     QCamera* m_camera;
@@ -68,6 +71,10 @@ private:
 
     QImage m_currentFrame;
     QByteArray m_currentBase64Frame;
+
+	QNetworkAccessManager *p_manager;
+	QString m_sysExec;
+
 #ifdef VEJAM_GUI_QT_TYPE
     Ui::MainWindowQt *ui;
 #else
@@ -156,6 +163,7 @@ public slots:
     void OnStateChanged(int newState);
     void OnDataReceived(QByteArray data);
     void OnDataReceivedAjax(QByteArray data);
+	void OnwGetfileDone(QNetworkReply* reply);
 
 
 signals:
