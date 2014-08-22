@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT += core gui
-QT += multimedia multimediawidgets #webkitwidgets
+QT += multimedia multimediawidgets
 QT += webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -13,8 +13,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = vejam
 TEMPLATE = app
 
-LIBS += -LC:/OpenSSL-Win32/lib -llibeay32
-INCLUDEPATH += C:/OpenSSL-Win32/include
+
+#LIBS += -lwinmm -lWs2_32 -lQt5PlatformSupport
 
 SOURCES += main.cpp\
         mainwindow.cpp \
