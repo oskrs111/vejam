@@ -22,6 +22,10 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="vejam.qrc">
+    <normaloff>:/png/img/vejam_small_h64_white.png</normaloff>:/png/img/vejam_small_h64_white.png</iconset>
+  </property>
   <property name="windowOpacity">
    <double>0.750000000000000</double>
   </property>
@@ -29,7 +33,12 @@
    <enum>Qt::LeftToRight</enum>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">#loadingDialog
+{
+	background-image: url(:/png/img/vejam_small_h64_white.png);
+	background-repeat: no-repeat;
+    background-position: center; 
+}</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -82,6 +91,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="vejam.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -52,13 +52,15 @@ MainWindow::MainWindow(QWidget *parent) :
 		this->setDefaultParameters();
 		 QMessageBox msgBox;                  
          msgBox.setText("vejam.cfg not found!\r\nSetting default configuration.");
+		 msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
          msgBox.exec();
     }
 
 	if(loadAvaliableCameras())
 	{
 		QMessageBox msgBox;
-		msgBox.setText("Windows dice que no hay camaras disponibles?");
+		msgBox.setText("No hay camaras disponibles?");
+		msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
 		msgBox.exec();
 	}		
 
@@ -616,7 +618,7 @@ void MainWindow::loadAppParameters()
         this->m_frameInterval = ((1000 / data) / APP_RUN_TIMER_PRESCALER);
     }
 
-    data = this->loadParam(QString("aplicacion"),QString("register-interval")).toInt();
+    data = this->loadParam(QString("aplicacion"),QString("sync-interval")).toInt();
     if(data)
     {
         this->m_syncInterval = data;
