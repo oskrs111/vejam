@@ -296,6 +296,7 @@ void MainWindow::setDefaultParameters()
     this->saveParam(QString("aplicacion"),QString("webkit-debug"),QString("1"));
     this->saveParam(QString("aplicacion"),QString("streamming-mode"),QString("1")); //1: WebKit, 2: MJPEG
 	this->saveParam(QString("aplicacion"),QString("streamming-id"),QString("0")); //1...8
+	this->saveParam(QString("aplicacion"),QString("streamming-alias"),QString("My Webcam!")); //1...8
 	this->saveParam(QString("aplicacion"),QString("server-url"),QString("www.vejam.info/app-gui")); //http://www.vejam.info/app-gui/app-gui-welcome.html
     this->saveParam(QString("conexion"),QString("webkit-port"),QString("12345"));
     this->saveParam(QString("conexion"),QString("mjpeg-port"),QString("54321"));
@@ -566,7 +567,14 @@ void MainWindow::setTrayIconState(int newState)
          default:
              this->setTrayIconState(MainWindow::trError);
              icon = QSystemTrayIcon::Critical;
-             msg = "Error!";
+             if(this->m_websockServer)
+			 {
+				msg = this->m_websockServer->getLastErrorDescription();
+			 }
+			 else
+			 {			 
+				msg = "Falta objeto m_websockServer?";
+			 }
              break;
      }
 

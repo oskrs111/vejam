@@ -102,13 +102,13 @@ QString MainWindow::getSyncString()
 {    
     QJsonObject json;
     QString enc64;
-
-
+	
     json.insert("server-ip",QJsonValue(this->m_lastIpReply));
     json.insert("webkit-port",QJsonValue(this->loadParam(QString("conexion"),QString("webkit-port"))));
     json.insert("mjpeg-port",QJsonValue(this->loadParam(QString("conexion"),QString("mjpeg-port"))));
     json.insert("streamming-mode",QJsonValue(this->loadParam(QString("aplicacion"),QString("streamming-mode"))));
-
+	json.insert("streamming-alias",QJsonValue(this->loadParam(QString("aplicacion"),QString("streamming-alias"))));
+	
     QJsonDocument jsonDoc(json);
     
     enc64 = this->getEncryptedString(QString(jsonDoc.toJson(QJsonDocument::Compact)), this->loadParam(QString("aplicacion"),QString("password")));
