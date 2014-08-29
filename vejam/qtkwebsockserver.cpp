@@ -1,3 +1,26 @@
+/*
+NOTICE: Although this piece of code has been written by me (Oscar Sanz LLopis 2014)
+is highly based on official WebSockets implementation so i want to maintain original
+License issues:
+*/
+/*
+QWebSockets implements the WebSocket protocol as defined in RFC 6455.
+Copyright (C) 2013 Kurt Pattyn (pattyn.kurt@gmail.com)
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 #include "qtkwebsockserver.h"
 #include <QTimer>
 #include <QThread>
@@ -383,37 +406,7 @@ QByteArray QtKWebsockServer::getSecWebSocketAccept(QByteArray httpHeaderBuffer)
                 hash = sha1.result();
                 qDebug() << "hash= " << hash;
 
-                return hash.toBase64();
-
-                /*
-                char hexstring[64];
-
-                char* base64out;
-                size_t base64outL;
-
-                memset( hash, 0x00, sizeof( hash ));
-                memset( hexstring, 0x00, sizeof( hexstring ));
-
-                memcpy( &wtKey[i], WK_HANDSHAKE_MAGIC, strlen( WK_HANDSHAKE_MAGIC ));
-
-                printf("\r\n\t\t'%s'\r\n", wtKey );
-
-                sha1::calc( wtKey ,strlen( wtKey ), hash ); // 10 is the length of the string
-                printf("sha1=\t\t'");
-                for( int r = 0; r < 20; r++ )
-                {
-                    printf("%X", hash[r] );
-                }
-                printf("'\r\n");
-
-
-                base64out = base64_encode( hash, sizeof( hash ), &base64outL );
-                base64out[base64outL] = 0;
-
-                printf("base64=\t\t'%s'\r\n", base64out );
-
-                return base64out;
-                */
+                return hash.toBase64();				               
         }
 
     return hash;
