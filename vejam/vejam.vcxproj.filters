@@ -46,12 +46,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{a7faab46-34d2-4a28-b9c6-d022144b817a}</UniqueIdentifier>
+      <UniqueIdentifier>{6407bed5-23ea-4dfb-b20e-9a4f9016310f}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{2a36eeb2-07b5-4dea-90a1-dcad25e06ee1}</UniqueIdentifier>
+      <UniqueIdentifier>{013c3a55-6f46-4440-84ad-009dfb806fc1}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -162,6 +162,8 @@
     <None Include="img\vejam_toolbar_h48.png">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="icon1.ico" />
+    <None Include="img\vejam_toolbar_h48.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_loadingdialog.h">
@@ -170,5 +172,11 @@
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vejam.rc" />
   </ItemGroup>
 </Project>
