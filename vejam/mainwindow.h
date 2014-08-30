@@ -92,6 +92,7 @@ private:
     void initTrayIcon();
     void setTrayIconState(int newState);
     void changeEvent(QEvent *e);
+	void closeEvent (QCloseEvent *event);
     void setDefaultParameters();
     void loadAppParameters();
 	
