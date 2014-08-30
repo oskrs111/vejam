@@ -11,7 +11,7 @@
 #include <QBuffer>
 #include <QUrl>
 
-#define VEJAM_APP_VERSION "1.0"
+#define VEJAM_APP_VERSION "BETA 1.0"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -134,6 +134,19 @@ void MainWindow::changeEvent(QEvent *e)
         break;
     default:
         break;
+    }
+}
+
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "VEJAM",
+                                                                tr("Seguro que quieres cerrar vejam.exe?\n"),
+                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+    } else {
+        event->accept();
     }
 }
 
@@ -293,7 +306,7 @@ void MainWindow::addJSObject(){}
 void MainWindow::setDefaultParameters()
 {
     this->saveParam(QString("aplicacion"),QString("sync-interval"),QString("3600"));
-    this->saveParam(QString("aplicacion"),QString("webkit-debug"),QString("1"));
+    this->saveParam(QString("aplicacion"),QString("webkit-debug"),QString("0"));
     this->saveParam(QString("aplicacion"),QString("streamming-mode"),QString("1")); //1: WebKit, 2: MJPEG
 	this->saveParam(QString("aplicacion"),QString("streamming-id"),QString("0")); //1...8
 	this->saveParam(QString("aplicacion"),QString("streamming-alias"),QString("My Webcam!")); //1...8
