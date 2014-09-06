@@ -11,6 +11,7 @@
 #include "loadingdialog.h"
 #include "qtkwebsockserver.h"
 #include "qtkapplicationparameters.h"
+#include "qtkcapturebuffer.h"
 
 #define VEJAM_GUI_WEBKIT_TYPE
 
@@ -49,7 +50,8 @@ private:
     QtKApplicationParameters* m_appParameters;
     QCamera* m_camera;
     QCameraImageCapture* m_imageCapture;
-    QCameraViewfinder* m_viewfinder;
+    //QCameraViewfinder* m_viewfinder;
+	QtKCaptureBuffer*  m_viewfinder;
     QSystemTrayIcon* m_trayIcon;
     QtKWebsockServer* m_websockServer;    
     QIcon m_icon;

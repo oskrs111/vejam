@@ -73,9 +73,6 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef VEJAM_GUI_QT_TYPE
 
     this->startServer();
-
-
-
 #else
 	//TODO: Migrar a => Qt WebEngine!!!
     QWebFrame* tempFrame = this->ui->webView->page()->mainFrame();
@@ -335,11 +332,12 @@ bool MainWindow::loadAvaliableCameras()
       this->m_devices.append(camDevice);
       this->saveParam(QString("device"),QString("name"),QString(camDevice.m_name),order);
       this->saveParam(QString("device"),QString("description"),QString(camDevice.m_description),order);
+	  order++;
   }
 
   if(this->m_devices.size())
   {
-      this->saveParam(QString("device"),QString("qtty"),QString("%1").arg(order));
+      this->saveParam(QString("device"),QString("qtty"),QString("%1").arg(this->m_devices.size()));
       this->fileSave();
       return 0;
   }
@@ -384,7 +382,8 @@ void  MainWindow::setCamera(const QByteArray &cameraDevice)
     connect(m_imageCapture, SIGNAL(error(int,QCameraImageCapture::Error,QString)), this,SLOT(displayCaptureError(int,QCameraImageCapture::Error,QString)));
     //connect(this->m_camera, SIGNAL(lockStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)), this, SLOT(updateLockStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
 
-    this->m_viewfinder = new QCameraViewfinder();
+    //this->m_viewfinder = new QCameraViewfinder();
+	this->m_viewfinder = new QtKCaptureBuffer(this);
     this->m_camera->setViewfinder(this->m_viewfinder);
     this->m_camera->setCaptureMode(QCamera::CaptureVideo);
     this->m_camera->start();
@@ -734,7 +733,7 @@ void MainWindow::OnwGetfileDone(QNetworkReply* reply)
 	if(data.size())
 	{
 		QFile file("updater.exe");
-		file.open(QIODevice::OpenModeFlag::WriteOnly);
+		file.open(QIODevice::WriteOnly);
 		file.write(data);
 		file.close();
 		
