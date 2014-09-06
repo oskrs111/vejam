@@ -142,6 +142,9 @@
     <ClCompile Include="Debug\moc_qtkapplicationparameters.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Debug\moc_qtkcapturebuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Debug\moc_qtkwebsockserver.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -155,6 +158,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="qtkapplicationparameters.cpp" />
+    <ClCompile Include="qtkcapturebuffer.cpp" />
     <ClCompile Include="qtkwebsockserver.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -207,6 +211,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Release\moc_qtkapplicationparameters.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Release\moc_qtkcapturebuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Release\moc_qtkwebsockserver.cpp">
@@ -293,7 +300,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="img\vejam_toolbar_h48.ico" />
     <None Include="img\vejam_toolbar_h48.png">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -302,16 +308,22 @@
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_loadingdialog.h" />
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h" />
-    <ClInclude Include="resource1.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="vejam1.rc" />
+    <CustomBuild Include="qtkcapturebuffer.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing qtkcapturebuffer.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WEBKITWIDGETS_LIB -DQT_QUICK_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_OPENGL_LIB -DQT_PRINTSUPPORT_LIB -DQT_WEBKIT_LIB -DQT_QML_LIB -DQT_MULTIMEDIA_LIB -DQT_WIDGETS_LIB -DQT_POSITIONING_LIB -DQT_SENSORS_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtWebKitWidgets" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtQuick" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtMultimediaWidgets" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtOpenGL" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtPrintSupport" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtWebKit" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtQml" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtMultimedia" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtWidgets" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtPositioning" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtSensors" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtNetwork" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtGui" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtCore" "-I.\release" "-I." "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\mkspecs\win32-msvc2010" "-I.\GeneratedFiles"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing qtkcapturebuffer.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WEBKITWIDGETS_LIB -DQT_QUICK_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_OPENGL_LIB -DQT_PRINTSUPPORT_LIB -DQT_WEBKIT_LIB -DQT_QML_LIB -DQT_MULTIMEDIA_LIB -DQT_WIDGETS_LIB -DQT_POSITIONING_LIB -DQT_SENSORS_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtWebKitWidgets" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtQuick" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtMultimediaWidgets" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtOpenGL" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtPrintSupport" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtWebKit" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtQml" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtMultimedia" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtWidgets" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtPositioning" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtSensors" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtNetwork" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtGui" "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\include\QtCore" "-I.\debug" "-I." "-IC:\Qt\Qt5.2.1\5.2.1\msvc2010_opengl\mkspecs\win32-msvc2010" "-I.\GeneratedFiles"</Command>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Qt5Version_x0020_Win32="Qt5.2.1" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" />
+      <UserProperties Qt5Version_x0020_Win32="5.2.1" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
