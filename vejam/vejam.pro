@@ -10,6 +10,8 @@ QT += webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+
+DEFINES += VEJAM_GUI_WEBKIT_TYPE
 TARGET = vejam
 TEMPLATE = app
 
@@ -21,12 +23,14 @@ SOURCES += main.cpp\
         qtkwebsockserver.cpp \
     qtkapplicationparameters.cpp \
     loadingdialog.cpp \
-    syncmachine.cpp
+    syncmachine.cpp \
+    qtkcapturebuffer.cpp
 
 HEADERS  += mainwindow.h \
     qtkwebsockserver.h \
     qtkapplicationparameters.h \
-    loadingdialog.h
+    loadingdialog.h \
+    qtkcapturebuffer.h
 
 FORMS    += mainwindow.ui \
     loadingdialog.ui
