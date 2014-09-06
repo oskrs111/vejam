@@ -71,8 +71,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 #ifdef VEJAM_GUI_QT_TYPE
-
-    this->startServer();
+    //this->startServer();
+    this->goAuthenticate();
 #else
 	//TODO: Migrar a => Qt WebEngine!!!
     QWebFrame* tempFrame = this->ui->webView->page()->mainFrame();
@@ -169,7 +169,8 @@ void MainWindow::runMachine()
                      if((this->m_websockServer->getState() == QtKWebsockServer::stConnected) ||
                       (this->isHidden() == false))
                     {
-                        this->m_imageCapture->capture();
+                        //this->m_imageCapture->capture();
+						this->m_viewfinder->capture();
                         this->m_state = stWaitCapture;
                     }
                 }
@@ -194,8 +195,8 @@ void MainWindow::runMachine()
         if(this->isHidden() == false)
         {
 #ifdef VEJAM_GUI_QT_TYPE            
-            this->ui->videoFrame->setPixmap(QPixmap::fromImage(this->m_currentFrame.scaled(QSize(400,300))));
-            this->ui->videoFrame->show();
+            //this->ui->videoFrame->setPixmap(QPixmap::fromImage(this->m_currentFrame.scaled(QSize(400,300))));
+            //this->ui->videoFrame->show();
 #else
                 emit this->webImageReady();                      
 #endif
@@ -366,24 +367,26 @@ void  MainWindow::setCamera(const QByteArray &cameraDevice)
 
     this->m_encodeSettings.setQuality((QMultimedia::EncodingQuality)this->loadParam(QString("video"),QString("calidad")).toInt());
 
-	this->m_imageCapture = new QCameraImageCapture(this->m_camera);
-    this->m_imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer); //->https://qt-project.org/forums/viewthread/17204
-    this->m_imageCapture->setEncodingSettings(this->m_encodeSettings);
 
-	qDebug() << "Supported image settings:";
-	qDebug() << this->m_imageCapture->supportedBufferFormats();
-	qDebug() << this->m_imageCapture->supportedImageCodecs();
-	qDebug() << this->m_imageCapture->supportedResolutions();
-	
+	//this->m_imageCapture = new QCameraImageCapture(this->m_camera);
+    //this->m_imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer); //->https://qt-project.org/forums/viewthread/17204
+    //this->m_imageCapture->setEncodingSettings(this->m_encodeSettings);
+
+	//qDebug() << "Supported image settings:";
+	//qDebug() << this->m_imageCapture->supportedBufferFormats();
+	//qDebug() << this->m_imageCapture->supportedImageCodecs();
+	//qDebug() << this->m_imageCapture->supportedResolutions();	
 
     //connect(m_imageCapture, SIGNAL(readyForCaptureChanged(bool)), this, SLOT(readyForCapture(bool)));
-    connect(m_imageCapture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(processCapturedImage(int,QImage)));
+    //connect(m_imageCapture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(processCapturedImage(int,QImage)));
     //connect(m_imageCapture, SIGNAL(imageSaved(int,QString)), this, SLOT(imageSaved(int,QString)));
-    connect(m_imageCapture, SIGNAL(error(int,QCameraImageCapture::Error,QString)), this,SLOT(displayCaptureError(int,QCameraImageCapture::Error,QString)));
+    //connect(m_imageCapture, SIGNAL(error(int,QCameraImageCapture::Error,QString)), this,SLOT(displayCaptureError(int,QCameraImageCapture::Error,QString)));
     //connect(this->m_camera, SIGNAL(lockStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)), this, SLOT(updateLockStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
 
-    //this->m_viewfinder = new QCameraViewfinder();
-	this->m_viewfinder = new QtKCaptureBuffer(this);
+    //this->m_viewfinder = new QCameraViewfinder(this);
+    this->m_viewfinder = new QtKCaptureBuffer(this);
+	connect(this->m_viewfinder, SIGNAL(imageCaptured(int,QImage)), this, SLOT(processCapturedImage(int,QImage)));
+
     this->m_camera->setViewfinder(this->m_viewfinder);
     this->m_camera->setCaptureMode(QCamera::CaptureVideo);
     this->m_camera->start();
@@ -746,6 +749,12 @@ void MainWindow::OnwGetfileDone(QNetworkReply* reply)
 		}
 	}
 }
+
+void MainWindow::goAuthenticate()
+{
+
+}
+
 
 //Q:Uy! y esto?...
 //A:Bueno partimos el archivo para que no sea tan grande.. y evitamos también algunos problemas raros de compilacion... no se.. yo soy asin...

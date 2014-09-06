@@ -16,8 +16,8 @@ public:
             QAbstractVideoBuffer::HandleType handleType =
             QAbstractVideoBuffer::NoHandle) const
     {
-        // A través de este método nos preguntan que formatos de
-        // vídeo soportamos. Como vamos a guardar los frames en
+        // A travÃ©ss de este mÃ©todotodo nos preguntan que formatos de
+        // vÃ­deodeo soportamos. Como vamos a guardar los frames en
         // objetos QImage nos sirve cualquiera de los formatos
         // sorportados por dicha clase: http://kcy.me/z6pa
         QList<QVideoFrame::PixelFormat> formats;
@@ -30,12 +30,16 @@ public:
         return formats;
     }
 
-    bool present(const QVideoFrame &frame)
-    {
-        // A través de este método nos darán el frame para que
-        // lo mostremos.
-        return true;
-    }
+	bool present(const QVideoFrame &frame);
+	void capture();
+
+Q_SIGNALS:
+	void imageCaptured(int id, const QImage &preview);
+
+    private:
+	QImage::Format getQImageFormat(QVideoFrame::PixelFormat format);    
+	QMutex mutex;
+	bool doCapture;
 };
 
 #endif

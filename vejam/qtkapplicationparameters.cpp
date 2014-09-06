@@ -54,7 +54,7 @@ QString QtKApplicationParameters::loadParam(QString groupName, QString paramName
     }
     d = this->m_projectParameters.value(pn,QVariant(QString("void")));
     r = d.toString();
-    qDebug() << "loadParam(): " << pn << d;
+    //qDebug() << "loadParam(): " << pn << d;
     return r;
 }
 

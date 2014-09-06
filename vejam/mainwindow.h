@@ -13,8 +13,6 @@
 #include "qtkapplicationparameters.h"
 #include "qtkcapturebuffer.h"
 
-#define VEJAM_GUI_WEBKIT_TYPE
-
 #ifdef VEJAM_GUI_QT_TYPE
 namespace Ui {
 class MainWindowQt;
@@ -51,7 +49,8 @@ private:
     QCamera* m_camera;
     QCameraImageCapture* m_imageCapture;
     //QCameraViewfinder* m_viewfinder;
-	QtKCaptureBuffer*  m_viewfinder;
+    QtKCaptureBuffer*  m_viewfinder;
+    //QAbstractVideoSurface* m_viewfinder;
     QSystemTrayIcon* m_trayIcon;
     QtKWebsockServer* m_websockServer;    
     QIcon m_icon;
@@ -97,6 +96,8 @@ private:
 	void closeEvent (QCloseEvent *event);
     void setDefaultParameters();
     void loadAppParameters();
+
+    void goAuthenticate();
 	
 	//syncmachine.cpp!
 	void syncMachineSet(int newState);

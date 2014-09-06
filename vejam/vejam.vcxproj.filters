@@ -46,12 +46,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{bc103c6d-4846-4b6f-aaea-7c8279d8b7ec}</UniqueIdentifier>
+      <UniqueIdentifier>{a8831475-dcce-4900-bce6-af959df152ab}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{0218e333-f08f-46a5-a4b7-7b87e99d3cdb}</UniqueIdentifier>
+      <UniqueIdentifier>{96d3f051-edce-4ef4-864e-6e62557552b8}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -67,6 +67,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="qtkapplicationparameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qtkcapturebuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="qtkwebsockserver.cpp">
@@ -90,6 +93,12 @@
     <ClCompile Include="Debug\moc_qtkapplicationparameters.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Release\moc_qtkcapturebuffer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_qtkcapturebuffer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
     <ClCompile Include="Release\moc_qtkwebsockserver.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
@@ -98,15 +107,6 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_vejam.cpp">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qtkcapturebuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_qtkcapturebuffer.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_qtkcapturebuffer.cpp">
-      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,10 +119,10 @@
     <CustomBuild Include="qtkapplicationparameters.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qtkwebsockserver.h">
+    <CustomBuild Include="qtkcapturebuffer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qtkcapturebuffer.h">
+    <CustomBuild Include="qtkwebsockserver.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
