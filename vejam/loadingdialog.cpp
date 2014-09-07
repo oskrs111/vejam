@@ -22,5 +22,5 @@ loadingDialog::~loadingDialog()
 
 void loadingDialog::setProgress(quint16 progress)
 {
-    ui->progresslabel->setText(QString("%1").arg(progress));
+    ui->progresslabel->setText(QString("%1%2").arg(progress).arg('%'));
 }
