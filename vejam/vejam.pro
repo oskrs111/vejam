@@ -10,6 +10,10 @@ QT += webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+#OpenSSL Libraries in Windows
+INCLUDEPATH += "C:/OpenSSL-Win32/include"
+#LIBS += -L"C:\OpenSSL-Win32\lib\VC" -llibeay32MD.lib
+#OpenSSL Libraries in Windows - END
 
 DEFINES += VEJAM_GUI_WEBKIT_TYPE
 TARGET = vejam

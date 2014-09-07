@@ -23,7 +23,7 @@ class MainWindow;
 }
 #endif
 
-#define APP_RUN_TIMER_PRESCALER 20  //ms
+#define APP_RUN_TIMER_PRESCALER 5  //ms
 #define APP_RUN_SYNC_PRESCALER 1000 //ms
 
 class MainWindow : public QMainWindow
@@ -41,6 +41,7 @@ public:
     Q_INVOKABLE bool fileLoad(bool showAlerts);
     Q_INVOKABLE bool fileSave();
 	Q_INVOKABLE QString getVersion();
+	Q_INVOKABLE void updateSyncRealm(QString newRealm);
 	Q_INVOKABLE bool wGetFile(QString url);
 	Q_INVOKABLE bool wSysExec(QString sysExec);
 	
@@ -69,6 +70,7 @@ private:
     QString m_username;
     QString m_password;
     QString m_lastIpReply;
+	QString m_currentRealm;
 
     QImage m_currentFrame;
     QByteArray m_currentBase64Frame;
@@ -103,8 +105,8 @@ private:
 	void syncMachineSet(int newState);
 	QString getSyncString();
 	QString getEncryptedString(QString cleanText, QString password);
-
-
+	//QString getEncryptedStringOpenSSL(QString cleanText, QString password);
+	
     enum runStates
     {
         stIdle = 0,
@@ -128,7 +130,8 @@ private:
         sstSendSync,
         sstWaitSyncAck,
         sstWaitSyncAckDone,
-        sstSyncError
+        sstSyncErrorWrongRealm,
+		sstSyncError
     };
 
 

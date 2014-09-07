@@ -29,11 +29,11 @@ bool QtKCaptureBuffer::present(const QVideoFrame &frame)
     if(tFrame.map(QAbstractVideoBuffer::ReadOnly) && this->doCapture)
     {
 		this->doCapture = false;
-		lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).rgbSwapped().mirrored(1, 0);;
+		lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0);;
         tFrame.unmap();
 		emit imageCaptured(cnt++, lastFrame);
 		
-		qDebug() << "QtKCaptureBuffer::process(FrameFormat is " << tFrame.pixelFormat() << " )";
+		//qDebug() << "QtKCaptureBuffer::process(FrameFormat is " << tFrame.pixelFormat() << " )";
 	}
 
 	mutex.unlock();

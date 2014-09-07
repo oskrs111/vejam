@@ -50,8 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
     if(this->m_appParameters->fileLoad(false))
     {      
 		this->setDefaultParameters();
-		 QMessageBox msgBox;                  
-         msgBox.setText("vejam.cfg not found!\r\nSetting default configuration.");
+		 QMessageBox msgBox;  
+		 QString msg = "No se ha encontrado vejam.cfg!\r\nEstableciendo configuración por defecto.\r\n\r\n";
+		 msg += "vejam.cfg not found!\r\nSetting default configuration.";
+         msgBox.setText(msg);
 		 msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
          msgBox.exec();
     }
@@ -59,7 +61,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	if(loadAvaliableCameras())
 	{
 		QMessageBox msgBox;
-		msgBox.setText("No hay camaras disponibles?");
+		QString msg = "No hay camaras disponibles?\r\n\r\n";
+		msg = "No cameras avaliable?";
+		msgBox.setText(msg);
 		msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
 		msgBox.exec();
 	}		
@@ -530,9 +534,7 @@ void MainWindow::setTrayIconState(int newState)
 
 	 v = this->m_appParameters->loadParam(QString("device"),QString("selected"),0).toInt();
 	 s = this->m_appParameters->loadParam(QString("device"),QString("name"),v);
-	 
-	 //this->m_syncInterval = this->m_appParameters->loadParam(QString("aplicacion"),QString("sync-interval"),0).toInt();		 
-	 
+	 	 	 
 	 this->setCamera(s.toUtf8());        
 	 this->runMachineSet(stCapture);
      this->syncMachineSet(sstAskForIp);
@@ -753,6 +755,12 @@ void MainWindow::OnwGetfileDone(QNetworkReply* reply)
 void MainWindow::goAuthenticate()
 {
 
+}
+
+void MainWindow::updateSyncRealm(QString newRealm)
+{
+	this->m_currentRealm = newRealm;
+	qDebug() << "MainWindow::updateSyncRealm( " << this->m_currentRealm  << " )";
 }
 
 
