@@ -13,6 +13,37 @@
 
 #define VEJAM_APP_VERSION "BETA 1.0"
 
+//http://doc.qt.io/qt-5/qtglobal.html#qInstallMessageHandler
+void vejamLogger(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    switch (type) {
+    case QtDebugMsg:
+		localMsg.prepend("DEBUG: ");
+        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtWarningMsg:		
+		localMsg.prepend("WARNING: ");
+        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtCriticalMsg:
+		localMsg.prepend("CRITICAL: ");
+        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtFatalMsg:
+		localMsg.prepend("FATAL: ");
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        abort();
+    }
+
+	localMsg.append("\r\n");
+	
+    QFile f("vejam.debug.log");
+	f.open(QIODevice::Append);
+    f.write(localMsg);
+    f.close();
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     #ifdef VEJAM_GUI_QT_TYPE
@@ -34,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->m_websockServer = 0;
     this->p_ld = 0;
 	this->p_manager = 0;
+	this->m_webInterfaceLoadTryouts = 0;
 
     /*
     Qt::WindowFlags flags = 0;
@@ -84,7 +116,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->webView, SIGNAL(loadStarted()),this, SLOT(loadStarted()));
     QObject::connect(this->ui->webView, SIGNAL(loadProgress(int)),this, SLOT(loadProgress(int)));
     QObject::connect(this->ui->webView, SIGNAL(loadFinished(bool)),this, SLOT(loadFinished(bool)));
+	
+	this->loadWebInterface();
 
+/*
     QString url = "http://";
     url += this->m_serverUrl;	
 
@@ -94,6 +129,8 @@ MainWindow::MainWindow(QWidget *parent) :
         url += this->m_username;
         url += "&password=";
         url += this->m_password;
+		url += "&sourceId=";
+		url += this->loadParam(QString("aplicacion"),QString("streamming-id"));
     }
     else
     {
@@ -102,10 +139,32 @@ MainWindow::MainWindow(QWidget *parent) :
 
     qDebug() << url;    
     this->ui->webView->load(QUrl(url));
+	*/
     qDebug() << "MainWindow::MainWindow(END)";
 #endif
+}
 
+void MainWindow::loadWebInterface()
+{
+ QString url = "http://";
+    url += this->m_serverUrl;	
 
+    if(this->m_autoStart)
+    {
+        url += "/app-gui-run.php?username=";
+        url += this->m_username;
+        url += "&password=";
+        url += this->m_password;
+		url += "&sourceId=";
+		url += this->loadParam(QString("aplicacion"),QString("streamming-id"));
+    }
+    else
+    {
+        url += "/app-gui-welcome.html";
+    }
+
+    qDebug() << url;    
+    this->ui->webView->load(QUrl(url));
 }
 
 MainWindow::~MainWindow()
@@ -196,8 +255,8 @@ void MainWindow::runMachine()
 			 //Continua a stSend...
 
         case stSend:
-        if(this->isHidden() == false)
-        {
+			if(this->isHidden() == false)
+			{
 #ifdef VEJAM_GUI_QT_TYPE            
             //this->ui->videoFrame->setPixmap(QPixmap::fromImage(this->m_currentFrame.scaled(QSize(400,300))));
             //this->ui->videoFrame->show();
@@ -205,6 +264,7 @@ void MainWindow::runMachine()
                 emit this->webImageReady();                      
 #endif
              }
+
              switch(this->m_streammingMode)
              {
                 case smodWebKit:
@@ -287,13 +347,38 @@ void MainWindow::loadProgress(int progress){}
 #endif
 
 void MainWindow::loadFinished(bool result)
+{		
+	this->p_ld->hide();
+	if(this->p_ld)
+	{
+		delete this->p_ld;
+		this->p_ld = 0;
+	}
+
+	if(result ==  false)
+	{
+		if(this->m_webInterfaceLoadTryouts > APP_WEB_INTERFACE_LOAD_TRYOUTS)
+		{
+			QMessageBox msgBox(this);
+			QString msg = "No se puede establecer conexión con el servidor VEJAM.\r\n\r\n";
+			msg += "Can't connect to VEJAM server.";
+			msgBox.setText(msg);
+			//msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
+			msgBox.exec();		
+			this->m_webInterfaceLoadTryouts = 0;
+			QTimer::singleShot(APP_RUN_RELOAD_PRESCALER, this, SLOT(reloadWebInterface()));
+		}	
+		else
+		{
+			QTimer::singleShot(APP_RUN_RELOAD_PRESCALER, this, SLOT(reloadWebInterface()));
+			this->m_webInterfaceLoadTryouts++; 
+		}				
+	}
+}
+
+void MainWindow::reloadWebInterface()
 {
-    this->p_ld->hide();
-    if(this->p_ld)
-    {
-        delete this->p_ld;
-        this->p_ld = 0;
-    }
+	this->loadWebInterface();
 }
 
 #ifdef VEJAM_GUI_WEBKIT_TYPE
@@ -648,7 +733,7 @@ void MainWindow::loadAppParameters()
     {
         this->m_syncInterval = data;
     }
-
+	
 #ifdef VEJAM_GUI_WEBKIT_TYPE
     if(!this->loadParam(QString("aplicacion"),QString("webkit-debug")).compare("1"))
     {
@@ -665,6 +750,11 @@ void MainWindow::loadAppParameters()
         this->m_password = this->loadParam(QString("aplicacion"),QString("password"));
     }
     else this->m_autoStart = false;
+
+	if(!this->loadParam(QString("aplicacion"),QString("file-log")).compare("1"))
+	{
+		qInstallMessageHandler(vejamLogger);
+	}
 }
 
 

@@ -25,6 +25,10 @@ class MainWindow;
 
 #define APP_RUN_TIMER_PRESCALER 5  //ms
 #define APP_RUN_SYNC_PRESCALER 1000 //ms
+#define APP_RUN_RELOAD_PRESCALER 500 //ms
+#define APP_WEB_INTERFACE_LOAD_TRYOUTS 25
+
+void vejamLogger(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 class MainWindow : public QMainWindow
 {
@@ -65,6 +69,7 @@ private:
     int m_frameInterval;
     int m_syncInterval;
 	int m_streammingMode;
+	int m_webInterfaceLoadTryouts;
     
     QString m_serverUrl;
     QString m_username;
@@ -98,6 +103,7 @@ private:
 	void closeEvent (QCloseEvent *event);
     void setDefaultParameters();
     void loadAppParameters();
+	void loadWebInterface();
 
     void goAuthenticate();
 	
@@ -165,6 +171,7 @@ public slots:
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void syncAckReply(QNetworkReply* reply);
     void askForIpReply(QNetworkReply* reply);
+	void reloadWebInterface();
 
     void OnSocketReset();
     void OnStateChanged(int newState);
