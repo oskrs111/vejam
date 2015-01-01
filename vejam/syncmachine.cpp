@@ -66,7 +66,7 @@ void MainWindow::syncMachine()
             url += this->loadParam(QString("aplicacion"),QString("streamming-id"));
             url += "&syncData=";
             url += this->getSyncString();   
-			url += "&syncEncript=1";
+			url += "&syncEncript=1";	//OSLL: 0 = No Encrypt, 1 = AES, 2 = DES.
 			url += "&syncRealm=";
 			url += this->m_currentRealm;
             manager = new QNetworkAccessManager(this);

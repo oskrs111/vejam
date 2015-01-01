@@ -46,8 +46,9 @@ QImage::Format QtKCaptureBuffer::getQImageFormat(QVideoFrame::PixelFormat format
 	switch(format)
 	{
 		case QVideoFrame::Format_RGB24: return QImage::Format_RGB888;
+	    case QVideoFrame::Format_RGB32: return QImage::Format_RGB32;
 		default: break; 
 	}
 
-	return QImage::Format_Invalid;
+	return QImage::Format_RGB888;
 }
