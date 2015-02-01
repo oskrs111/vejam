@@ -122,7 +122,9 @@ private:
         stSend,
         stWaitAck,
         stWaitAckDone,
-        stWaitState
+        stWaitState,
+		stRemoteCloseRequest,
+		stEnd
     };
 
     enum syncStates

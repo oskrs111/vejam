@@ -315,6 +315,11 @@ void MainWindow::runMachine()
             }
             break;
 
+		case stRemoteCloseRequest:
+			this->m_websockServer->forceConnectionClose();
+			this->m_state = stIdle;
+			break;
+
         default: break;
     }
 
@@ -685,13 +690,16 @@ void MainWindow::setTrayIconState(int newState)
 
 void MainWindow::OnDataReceived(QByteArray data)
 {
-    qDebug() << "OnDataReceived(" << data << ")";
+    
     
 	
 	QJsonDocument jsonDoc;
 	QJsonObject json;
 	
 	jsonDoc = QJsonDocument::fromJson(data);
+
+	qDebug() << "OnDataReceived(" << jsonDoc << ")";
+
 	if(jsonDoc.isObject())
 	{
 		json = jsonDoc.object();
@@ -699,6 +707,10 @@ void MainWindow::OnDataReceived(QByteArray data)
 		if( json.value(QString("ack")).toString().compare("ok") == 0 )
 		{
 			this->runMachineSet(stWaitState);
+		}
+		else if( json.value(QString("ack")).toString().compare("close") == 0 )
+		{
+			this->runMachineSet(stRemoteCloseRequest);
 		}
 		
 		//TODO: Remote settings setup...
