@@ -2,6 +2,8 @@
 #define QTKCAPTUREBUFFER_H
 #include <QAbstractVideoSurface>
 
+#define CAPTURE_TIMER_PRESCALER 40	//ms -> eq. 25 fps.
+#define CAPTURE_TIMER_VALUE		250	//CAPTURE_TIMER_PRESCALER * 10 = 1s
 
 class QtKCaptureBuffer : public QAbstractVideoSurface
 //http://ull-etsii-sistemas-operativos.github.io/videovigilancia-blog/capturando-secuencias-de-video-con-qt.html
@@ -30,16 +32,22 @@ public:
         return formats;
     }
 
-	bool present(const QVideoFrame &frame);
+	bool present(const QVideoFrame &frame);	
 	void capture();
-
-Q_SIGNALS:
-	void imageCaptured(int id, const QImage &preview);
 
     private:
 	QImage::Format getQImageFormat(QVideoFrame::PixelFormat format);    
-	QMutex mutex;
-	bool doCapture;
+    QImage m_lastFrame;
+    quint16 m_captureTimeout;
+    QMutex m_mutexA;
+	bool m_doCapture;
+
+public slots:
+	void OnCaptureTimer();
+	
+Q_SIGNALS:
+	void imageCaptured(int id, const QImage &preview);	
+	
 };
 
 #endif

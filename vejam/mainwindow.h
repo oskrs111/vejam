@@ -1,17 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
-#include <QCamera>
-#include <QMainWindow>
-#include <QCameraImageCapture>
-#include <QCameraViewfinder>
-#include <QSystemTrayIcon>
-#include <QImageEncoderSettings>
 #include <QtNetwork>
+#include <QMainWindow>
+#include <QSystemTrayIcon>
 #include "loadingdialog.h"
+#include "QtkHttpServer.h"
+#include "qtkvideoserver.h"
 #include "qtkwebsockserver.h"
 #include "qtkapplicationparameters.h"
-#include "qtkcapturebuffer.h"
 
 #ifdef VEJAM_GUI_QT_TYPE
 namespace Ui {
@@ -25,6 +21,7 @@ class MainWindow;
 
 #define APP_RUN_TIMER_PRESCALER 5  //ms
 #define APP_RUN_SYNC_PRESCALER 1000 //ms
+#define APP_VIEWFINDER_PRESCALER 100 //ms
 #define APP_RUN_RELOAD_PRESCALER 500 //ms
 #define APP_WEB_INTERFACE_LOAD_TRYOUTS 25
 
@@ -50,17 +47,19 @@ public:
 	Q_INVOKABLE bool wSysExec(QString sysExec);
 	
 private:
-    QtKApplicationParameters* m_appParameters;
-    QCamera* m_camera;
-    QCameraImageCapture* m_imageCapture;
-    //QCameraViewfinder* m_viewfinder;
-    QtKCaptureBuffer*  m_viewfinder;
-    //QAbstractVideoSurface* m_viewfinder;
+    QtKApplicationParameters* m_appParameters;          
     QSystemTrayIcon* m_trayIcon;
     QtKWebsockServer* m_websockServer;    
     QIcon m_icon;
-    QImageEncoderSettings m_encodeSettings;
+    QtkVideoServer* m_videoServer;
+    QtkHttpServer*  m_httpServer;
 
+/*
+    QCamera* m_camera;
+    QCameraImageCapture* m_imageCapture;
+    QtKCaptureBuffer*  m_viewfinder;
+    QImageEncoderSettings m_encodeSettings;
+*/
     bool m_imageReady;
     bool m_autoStart;
 
@@ -88,14 +87,9 @@ private:
 #else
     Ui::MainWindow *ui;
 #endif
-    loadingDialog* p_ld;
-    QList <struct vjCameraDevice> m_devices;
+    loadingDialog* p_ld;    
 
-    bool loadAvaliableCameras();
-    void runMachineSet(int newState);    
-    void setCamera(const QByteArray &cameraDevice);
-    void image2Base64();
-    QByteArray image2ByteArray();
+    void runMachineSet(int newState);
     void releaseAllocatedPointers();
     void initTrayIcon();
     void setTrayIconState(int newState);
@@ -159,17 +153,12 @@ private:
         smodMjpeg
     };
 
-public slots:
-    void runMachine();
+public slots:    
     void syncMachine();
     void addJSObject();
     void loadStarted();
     void loadProgress(int progress);
     void loadFinished(bool result);
-    void processCapturedImage(int id, QImage image);
-    void displayCaptureError(int id,QCameraImageCapture::Error error, QString errorString);
-    void updateCameraState(QCamera::State state);
-    void displayCameraError(QCamera::Error error);
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void syncAckReply(QNetworkReply* reply);
     void askForIpReply(QNetworkReply* reply);
@@ -180,17 +169,12 @@ public slots:
     void OnDataReceived(QByteArray data);
     void OnDataReceivedAjax(QByteArray data);
 	void OnwGetfileDone(QNetworkReply* reply);
+	void OnFrameUpdated();
+	void OnViewfinderTimeout();
 
 
 signals:
     void webImageReady();
-
+	void webImageStop();
 };
-
-struct vjCameraDevice
-{
-    QByteArray m_name;
-    QString m_description;
-};
-
 #endif // MAINWINDOW_H
