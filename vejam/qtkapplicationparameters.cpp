@@ -2,9 +2,12 @@
 #include <QFile>
 #include <QDebug>
 #include <QDateTime>
+#ifndef VEJAM_NO_GUI
 #include <QMessageBox>
+#endif
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <qcoreapplication.h>
 
 QtKApplicationParameters::QtKApplicationParameters(QObject *parent, QString appName) :
     QObject(parent)
@@ -62,6 +65,7 @@ bool QtKApplicationParameters::fileLoad(bool showAlerts)
 {
         QString fileName = this->m_appName;
         fileName.append(AP_FILE_EXTENSION);
+		fileName.prepend(qApp->applicationDirPath()+"/");
 
         QFile f(fileName);
         QByteArray fd;
@@ -79,11 +83,15 @@ bool QtKApplicationParameters::fileLoad(bool showAlerts)
         {
             if(showAlerts)
             {
+#ifdef          VEJAM_NO_GUI
+                qDebug() << "Error en el archivo de configuración: " << err.errorString().toLatin1().data() << "posición: " << err.offset;
+#else
                 QMessageBox msgBox;
                 QString msg;
                 msg.sprintf("Error en el archivo de configuración:\n\r[%s] - posición %d",err.errorString().toLatin1().data(),err.offset);
                 msgBox.setText(msg);
                 msgBox.exec();
+#endif
             }
 
             emit applicationParametersError();
@@ -108,6 +116,7 @@ bool QtKApplicationParameters::fileSave()
         QDateTime time;
         QString fileName = this->m_appName;
         fileName.append(AP_FILE_EXTENSION);
+		fileName.prepend(qApp->applicationDirPath()+"/");
 
         saveParam(QString("Common"), QString("LastSave"),time.toString(), 0);
 

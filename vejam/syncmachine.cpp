@@ -119,6 +119,7 @@ QString MainWindow::getSyncString()
     json.insert("server-ip",QJsonValue(this->m_lastIpReply));
     json.insert("webkit-port",QJsonValue(this->loadParam(QString("conexion"),QString("webkit-port"))));
     json.insert("mjpeg-port",QJsonValue(this->loadParam(QString("conexion"),QString("mjpeg-port"))));
+	json.insert("mjpeg-uri",QJsonValue(this->loadParam(QString("conexion"),QString("mjpeg-uri"))));
     json.insert("streamming-mode",QJsonValue(this->loadParam(QString("aplicacion"),QString("streamming-mode"))));
 	json.insert("streamming-alias",QJsonValue(this->loadParam(QString("aplicacion"),QString("streamming-alias"))));
 	

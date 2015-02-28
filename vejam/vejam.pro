@@ -28,13 +28,20 @@ SOURCES += main.cpp\
     qtkapplicationparameters.cpp \
     loadingdialog.cpp \
     syncmachine.cpp \
-    qtkcapturebuffer.cpp
+    qtkcapturebuffer.cpp \
+    qtkvideoserver.cpp \
+    qtkHttpServer.cpp \
+    qtkMjpgStreamer.cpp
 
 HEADERS  += mainwindow.h \
     qtkwebsockserver.h \
     qtkapplicationparameters.h \
     loadingdialog.h \
-    qtkcapturebuffer.h
+    qtkcapturebuffer.h \
+    qkHttpServer.h \
+    qtkvideoserver.h \
+    qtkMjpgStreamer.h \
+    qtkHttpServer.h
 
 FORMS    += mainwindow.ui \
     loadingdialog.ui
