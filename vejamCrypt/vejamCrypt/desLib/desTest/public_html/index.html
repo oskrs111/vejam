@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">        
+        <script src="dessrc.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            function RunDes (key, message, encrypt)
+            { //run all the different types of Des
+                //All the conditions are to to try to stop a Javascript error with vector being null                               
+                if (!encrypt) message = base64ToString (message); //treat it as hex
+                var result = des (key, message, encrypt, 0, 0, 2);
+                if (encrypt) result = stringToBase64 (result); //output as hex                
+                return result;
+            }
+			
+			function DES_b64_Encrypt (key, message)
+            { 
+                var result = des (key, message, 1, 0, 0, 2);                
+				result = window.btoa(result); 
+                return result;
+            }
+            
+			function DES_b64_Decrypt (key, message)
+            { 
+				var result = "";				
+				var msg = window.atob(message);
+				result = des (key, msg, 0, 0, 0, 2);                										
+                return result;
+            }
+			
+            function biTest()
+            {
+                var r;
+                var cls = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ornare ac arcu non molestie. Nam id augue aliquam, aliquam ante et, condimentum nunc. Nulla quis arcu vitae dolor iaculis vehicula efficitur in tellus. Quisque sed mi non ipsum bibendum pretium quis in nisi. Phasellus iaculis facilisis lorem nec tristique. Donec eleifend dui ut eleifend tempor. Etiam consectetur lorem mollis, venenatis dolor vel, vehicula magna. Integer condimentum erat ut lectus vehicula porttitor. Morbi neque ligula, interdum et commodo non, tincidunt eu nisi. Nullam rutrum faucibus neque, eu commodo diam. Sed vehicula leo nec dui maximus vulputate. Praesent ac urna accumsan, mattis libero in, ultricies mauris. Vivamus vitae magna eros. Vivamus risus lacus, pretium at massa in, dignissim dignissim justo. Suspendisse nisl magna, facilisis sed mauris et, vestibulum lobortis nulla. Morbi ullamcorper leo id urna consequat, sit amet venenatis eros blandit."
+                
+				document.writeln("<p><b>Clean input:</b><br/>"+cls+"</p>");                                
+                //r = RunDes("12345678", cls, 1);
+				
+				r = DES_b64_Encrypt ("1234", cls);
+                document.writeln ("<p><b>DES Encrypt:</b><br/>"+r+"</p>");                
+                                
+                //r = RunDes("12345678", r, 0);
+				r = DES_b64_Decrypt("1234", r);
+                document.writeln ("<p><b>Clean output:</b><br/>"+r+"</p>");                
+            }
+						
+			function cuTest()
+            {                
+                var r;
+				var cls = document.getElementById("b64input").value;
+				var pwd = document.getElementById("password").value;
+				r = DES_b64_Decrypt(pwd, cls);
+				document.getElementById("b64input").value = r;
+                
+            }
+            
+        </script>                        
+    </head>
+    <body>
+	<input type="button" value="Run built in test" onclick="biTest()"><br/>		
+	<input type="button" value="Decode B64 input" onclick="cuTest()">		
+	<input id="password" type="text" placeholder="Password"><br/>		
+	<textarea id="b64input" rows="25" cols="100">
+	Base64 encripted input here.
+	</textarea>		       
+    </body>
+</html>
