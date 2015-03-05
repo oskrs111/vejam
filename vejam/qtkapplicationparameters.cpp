@@ -113,12 +113,12 @@ bool QtKApplicationParameters::fileLoad(bool showAlerts)
 
 bool QtKApplicationParameters::fileSave()
 {
-        QDateTime time;
+	    QDateTime time =  QDateTime::currentDateTime();
         QString fileName = this->m_appName;
         fileName.append(AP_FILE_EXTENSION);
 		fileName.prepend(qApp->applicationDirPath()+"/");
 
-        saveParam(QString("Common"), QString("LastSave"),time.toString(), 0);
+        saveParam(QString("Common"), QString("LastSave"),time.toString("dd.MM.yyyy - hh:mm:ss.zzz"), 0);
 
         QJsonDocument doc;
         QJsonObject obj;

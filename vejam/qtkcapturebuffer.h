@@ -32,8 +32,17 @@ public:
         return formats;
     }
 
+	enum mirrorConfig
+	{
+		mirrorNone = 0,				
+		mirrorVertical,	
+		mirrorHorizontal,
+		mirrorAll
+	};
+	
 	bool present(const QVideoFrame &frame);	
 	void capture();
+	void setMirrorSetting(int mirrorSetting);
 
     private:
 	QImage::Format getQImageFormat(QVideoFrame::PixelFormat format);    
@@ -41,6 +50,7 @@ public:
     quint16 m_captureTimeout;
     QMutex m_mutexA;
 	bool m_doCapture;
+	int m_mirrorSetting;
 
 public slots:
 	void OnCaptureTimer();

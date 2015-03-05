@@ -42,6 +42,7 @@ class QtkHttpServer : public QTcpServer
      void setFilesRootPath(QString path);
 	 void setAppRootPath(QString path);
      void setVideoServer(QtkVideoServer* videoServer);
+	 void setMaxFramerate(int maxFrameRate);
 
  public slots:
      void readClient();
@@ -53,6 +54,8 @@ class QtkHttpServer : public QTcpServer
      QtkVideoServer* m_videoServer;
 	 QString m_fileRootPath;
 	 QString m_appRootPath;
-	 QString m_mjpegUri;                  
+	 QString m_mjpegUri;    
+	 int m_maxFrameRate;
+	 int m_clientCount;
 };
 #endif

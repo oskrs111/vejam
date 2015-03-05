@@ -31,7 +31,7 @@ void QtkMjpgStreamer::OnFrameUpdated()
 void QtkMjpgStreamer::OnStreamerRun()
 {
     static int frameDelay = 0;	
-	//static QFile dump("dump.mjpg");
+	
     switch(this->m_streamerState)
     {
        case sstIdle:
@@ -49,6 +49,12 @@ void QtkMjpgStreamer::OnStreamerRun()
             break;
 
        case sstServeHeader:
+		    if(this->m_socket->state() != QAbstractSocket::ConnectedState) 
+			{
+				this->setStreamerState(sstConnectionClosed);
+				break;
+			}
+
             this->m_socket->write(this->getHttpHeader());
 			//dump.write(this->getHttpHeader());
             this->m_socket->flush();
@@ -56,6 +62,12 @@ void QtkMjpgStreamer::OnStreamerRun()
             break;
 
        case sstServeFrameHeader:
+		    if(this->m_socket->state() != QAbstractSocket::ConnectedState) 
+			{
+				this->setStreamerState(sstConnectionClosed);
+				break;
+			}
+
             if(this->m_frameReady == true)
             {
                 this->m_frameReady = false;
@@ -74,6 +86,12 @@ void QtkMjpgStreamer::OnStreamerRun()
             //OSLL: Continues to 'sstServeJpegBytes'
 
        case sstServeJpegBytes:
+		   	if(this->m_socket->state() != QAbstractSocket::ConnectedState) 
+			{
+				this->setStreamerState(sstConnectionClosed);
+				break;
+			}
+
             this->m_socket->write(this->m_jpegBytes);
 			//dump.write(this->m_jpegBytes);
 			this->m_socket->flush();
@@ -168,4 +186,6 @@ int QtkMjpgStreamer::getLastError()
 void QtkMjpgStreamer::OnDisconnected()
 {
 	 this->setStreamerState(sstConnectionClosed);
+	 this->deleteLater();
 }
+

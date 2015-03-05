@@ -8,6 +8,7 @@ QtkHttpServer::QtkHttpServer(quint16 port, QObject* parent)
          this->m_videoServer = 0;
 		 this->m_mjpegUri = HS_MJPEG_DEFAULT_URI;
 		 this->m_fileRootPath= HS_WWW_DEFAULT_PATH;
+		 this->m_clientCount = 0;
 }
 
 void QtkHttpServer::setMjpgUri(QString uri)
@@ -37,11 +38,20 @@ void QtkHttpServer::incomingConnection(int socket)
          // works asynchronously, this means that all the communication is done
          // in the two slots readClient() and discardClient().
          QTcpSocket* s = new QTcpSocket(this);
-         connect(s, SIGNAL(readyRead()), this, SLOT(readClient()));
-         connect(s, SIGNAL(disconnected()), this, SLOT(discardClient()));
-         s->setSocketDescriptor(socket);
+		 if(s)
+		 {
+			 connect(s, SIGNAL(readyRead()), this, SLOT(readClient()));
+			 connect(s, SIGNAL(disconnected()), this, SLOT(discardClient()));
+			 s->setSocketDescriptor(socket);
+			 
+			 qDebug() << "New Remote Connection..: " << this->m_clientCount;
+			 this->m_clientCount++;
+		 }
+		 else
+		 {
+			qDebug() << "New Remote Connection..: OUT OF MEMORY!!!";
+		 }
 
-         qDebug() << "New Remote Connection...";
 }
 
 void QtkHttpServer::readClient()
@@ -65,6 +75,7 @@ void QtkHttpServer::readClient()
                         if(this->m_videoServer)
                         {
                             QtkMjpgStreamer* streamer = new QtkMjpgStreamer(socket, this->m_videoServer);	
+							streamer->setMaxFramerate(this->m_maxFrameRate);
 							connect(socket, SIGNAL(disconnected()), streamer, SLOT(OnDisconnected())); 
                             return;
                         }
@@ -112,7 +123,7 @@ void QtkHttpServer::readClient()
                 
                 if (socket->state() == QTcpSocket::UnconnectedState) 
 				{
-                    delete socket;                
+					socket->deleteLater();                
                 }
              }
          }
@@ -136,6 +147,9 @@ void QtkHttpServer::discardClient()
 {
 	QTcpSocket* socket = (QTcpSocket*)sender();
     socket->deleteLater();         
+	
+	this->m_clientCount--;
+    qDebug() << "Release Remote Connection..: " << this->m_clientCount;
 }
 
 int QtkHttpServer::getFilename(QString* filename)
@@ -160,3 +174,8 @@ int QtkHttpServer::getFilename(QString* filename)
 
 	return HS_GET_LOCAL_FILE  ;
 }
+
+ void QtkHttpServer::setMaxFramerate(int maxFrameRate)
+ {
+	 this->m_maxFrameRate = maxFrameRate;
+ }

@@ -210,6 +210,8 @@
     <None Include="img\vejam_toolbar_h48.png">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="icon1.ico" />
+    <None Include="vejam_toolbar_h48.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_loadingdialog.h">
@@ -218,5 +220,11 @@
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource3.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vejam3.rc" />
   </ItemGroup>
 </Project>

@@ -174,6 +174,7 @@
     <ClCompile Include="qtkwebsockserver.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource3.h" />
     <CustomBuild Include="loadingdialog.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DVEJAM_GUI_WEBKIT_TYPE -DQT_NO_DEBUG -DQT_WEBKITWIDGETS_LIB -DQT_QUICK_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_OPENGL_LIB -DQT_PRINTSUPPORT_LIB -DQT_WEBKIT_LIB -DQT_QML_LIB -DQT_MULTIMEDIA_LIB -DQT_WIDGETS_LIB -DQT_POSITIONING_LIB -DQT_SENSORS_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-IC:\OpenSSL-Win32\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWebKitWidgets" "-I$(QTDIR)\include\QtQuick" "-I$(QTDIR)\include\QtMultimediaWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtWebKit" "-I$(QTDIR)\include\QtQml" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtPositioning" "-I$(QTDIR)\include\QtSensors" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I." "-I$(QTDIR)\mkspecs\win32-msvc2010"</Command>
@@ -308,6 +309,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="icon1.ico" />
     <None Include="img\ajax-loader.gif">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -367,6 +369,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="vejam_toolbar_h48.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vejam3.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
