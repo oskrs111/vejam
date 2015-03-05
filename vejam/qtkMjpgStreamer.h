@@ -23,7 +23,7 @@ class QtkMjpgStreamer : public QObject
 	QtkMjpgStreamer(QTcpSocket* socket, QtkVideoServer* videoServer);
     void setMaxFramerate(int maxFrameRate);
 
-private:    
+private:    	
 	QtkVideoServer* m_videoServer;	
     QTcpSocket* m_socket;
     QByteArray m_jpegBytes;

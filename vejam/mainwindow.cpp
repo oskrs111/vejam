@@ -13,7 +13,7 @@
 #include <QEvent>
 #include <QUrl>
 
-#define VEJAM_APP_VERSION "BETA 1.0"
+#define VEJAM_APP_VERSION "BETA 1.1"
 
 //http://doc.qt.io/qt-5/qtglobal.html#qInstallMessageHandler
 void vejamLogger(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -95,6 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->m_videoServer = new QtkVideoServer(this->m_appParameters, this);
     this->m_httpServer = new QtkHttpServer(this->loadParam(QString("conexion"),QString("mjpeg-port")).toInt(0,10), this);
     this->m_httpServer->setVideoServer(this->m_videoServer);
+	this->m_httpServer->setMaxFramerate(this->loadParam(QString("video"),QString("framerate-max")).toInt(0,10));
 
     if(this->m_videoServer->loadAvaliableCameras())
 	{
@@ -284,6 +285,7 @@ void MainWindow::setDefaultParameters()
     this->saveParam(QString("video"),QString("resolucion-y"),QString("240"));
     this->saveParam(QString("video"),QString("calidad"),QString("-1"));
     this->saveParam(QString("video"),QString("framerate-max"),QString("6"));    
+	this->saveParam(QString("video"),QString("mirror-setting"),QString("0"));    
 	this->saveParam(QString("device"),QString("selected"),QString("1"));	//Indica la camara per defecte.	
     this->fileSave();
 }
@@ -437,7 +439,7 @@ void MainWindow::setTrayIconState(int newState)
 
 void MainWindow::OnFrameUpdated()
 {
-     if(isMinimized() == false)
+     if(isVisible())
 	 {         		
 		emit webImageReady();
 	 }
@@ -445,7 +447,7 @@ void MainWindow::OnFrameUpdated()
 
 void MainWindow::OnViewfinderTimeout()
 {
-	 if(isMinimized() == false)
+	 if(isVisible())
 	 {         
 		this->m_videoServer->Capture();
      }

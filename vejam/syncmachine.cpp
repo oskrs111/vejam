@@ -2,7 +2,7 @@
 
 void MainWindow::syncMachineSet(int newState)
 {   
-   qDebug() << "MainWindow::syncMachineSet(" << newState  << ")";
+   //qDebug() << "MainWindow::syncMachineSet(" << newState  << ")";
    this->m_syncState = newState;
 }
 

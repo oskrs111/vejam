@@ -1,4 +1,6 @@
 #include <QBuffer>
+#include <QPainter>
+#include <QDateTime>
 #include <QImageEncoderControl>
 #include "qtkvideoserver.h"
 
@@ -56,33 +58,9 @@ void  QtkVideoServer::setCamera(const QByteArray &cameraDevice)
     connect(this->m_camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(OnUpdateCameraState(QCamera::State)));
     connect(this->m_camera, SIGNAL(error(QCamera::Error)), this, SLOT(OnDisplayCameraError(QCamera::Error)));
   	
-	//this->m_encodeSettings.setCodec("image/jpeg");
-    
-	//NOTA: Esto en Qt5.3 no funciona... se implementa en QImage
-	//this->m_encodeSettings.setResolution(this->loadParam(QString("video"),QString("resolucion-x")).toInt(),
-    //                                     this->loadParam(QString("video"),QString("resolucion-y")).toInt());
-
-    //this->m_encodeSettings.setQuality((QMultimedia::EncodingQuality)this->loadParam(QString("video"),QString("calidad")).toInt());
-
-
-	//this->m_imageCapture = new QCameraImageCapture(this->m_camera);
-    //this->m_imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer); //->https://qt-project.org/forums/viewthread/17204
-    //this->m_imageCapture->setEncodingSettings(this->m_encodeSettings);
-
-	//qDebug() << "Supported image settings:";
-	//qDebug() << this->m_imageCapture->supportedBufferFormats();
-	//qDebug() << this->m_imageCapture->supportedImageCodecs();
-	//qDebug() << this->m_imageCapture->supportedResolutions();	
-
-    //connect(m_imageCapture, SIGNAL(readyForCaptureChanged(bool)), this, SLOT(readyForCapture(bool)));
-    //connect(m_imageCapture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(processCapturedImage(int,QImage)));
-    //connect(m_imageCapture, SIGNAL(imageSaved(int,QString)), this, SLOT(imageSaved(int,QString)));
-    //connect(m_imageCapture, SIGNAL(error(int,QCameraImageCapture::Error,QString)), this,SLOT(displayCaptureError(int,QCameraImageCapture::Error,QString)));
-    //connect(this->m_camera, SIGNAL(lockStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)), this, SLOT(updateLockStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
-
-    //this->m_viewfinder = new QCameraViewfinder();
-	//this->m_viewfinder->show();
+	
     this->m_viewfinder = new QtKCaptureBuffer(this);
+	this->m_viewfinder->setMirrorSetting(this->loadParam(QString("video"),QString("mirror-setting")).toInt());
 	connect(this->m_viewfinder, SIGNAL(imageCaptured(int,QImage)), this, SLOT(OnProcessCapturedImage(int,QImage)));
 
     this->m_camera->setViewfinder(this->m_viewfinder);
@@ -121,6 +99,7 @@ QByteArray QtkVideoServer::currentFrame2Base64Jpeg()
     QBuffer buffer(&ba);
     buffer.open(QBuffer::WriteOnly);
     m_mutexA.lock();
+		
     this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());    
     m_mutexA.unlock();
     buffer.close();
@@ -131,8 +110,11 @@ QByteArray QtkVideoServer::currentFrame2ByteArrayJpeg()
 {
     QByteArray ba;
     QBuffer buffer(&ba);
+	QDateTime time =  QDateTime::currentDateTime();
     buffer.open(QBuffer::WriteOnly);    
     m_mutexA.lock();
+	this->osdTextWrite(&this->m_currentFrame,  this->loadParam(QString("aplicacion"),QString("streamming-alias")), 25, 25);
+	this->osdTextWrite(&this->m_currentFrame,  time.toString("dd.MM.yyyy - hh:mm:ss.zzz"), 25, 50);
 	this->m_currentFrame.save( &buffer, "JPG", this->loadParam(QString("video"),QString("calidad")).toInt());
     m_mutexA.unlock();
     buffer.close();
@@ -169,4 +151,12 @@ QString QtkVideoServer::loadParam(QString groupName, QString paramName, quint16 
         return this->m_appParameters->loadParam(groupName, paramName, order);
     }
 	return 0;
+}
+
+void QtkVideoServer::osdTextWrite(QImage* img, QString osdText, int xPos, int yPos)
+{	
+	QPainter p(img);
+	p.setPen(QPen(Qt::blue));
+	p.setFont(QFont("Times", 14, QFont::Bold));	
+	p.drawText(QPoint(xPos, yPos), osdText); 
 }

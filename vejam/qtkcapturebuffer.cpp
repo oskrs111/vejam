@@ -7,6 +7,7 @@ QtKCaptureBuffer::QtKCaptureBuffer(QObject *parent):
 {
     this->m_doCapture = false;
 	this->m_captureTimeout = 0;
+	this->m_mirrorSetting = 0;
 }
 
 QtKCaptureBuffer::~QtKCaptureBuffer()
@@ -70,28 +71,51 @@ bool QtKCaptureBuffer::present(const QVideoFrame &frame)
 }
 */
 
+void QtKCaptureBuffer::setMirrorSetting(int mirrorSetting)
+{
+	this->m_mirrorSetting = mirrorSetting;
+}
+
 bool QtKCaptureBuffer::present(const QVideoFrame &frame)
 //qtmultimedia\src\plugins\directshow\camera\dscamerasession.cpp
 {
-	static int cnt = 0;
-	QVideoFrame tFrame = frame;
-	QImage lastFrame;
-
+	static int cnt = 0;		
+	if(!this->m_doCapture) return false;
+	
 	m_mutexA.lock();
-
-    if(tFrame.map(QAbstractVideoBuffer::ReadOnly) && this->m_doCapture)
-    {
+	QVideoFrame tFrame = frame;	
+    if(tFrame.map(QAbstractVideoBuffer::ReadOnly))
+    {	
 		this->m_doCapture = false;
-		lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0);;
-        tFrame.unmap();
-		emit imageCaptured(cnt++, lastFrame);
+		switch(this->m_mirrorSetting)
+		{
+			case mirrorVertical:
+				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(0, 1);
+				break;
+
+			case mirrorHorizontal:
+				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0);
+				break;
+
+			case mirrorAll:
+				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 1);
+				break;
+
+			case mirrorNone:			
+			default:
+			this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat()));
+			break;
+		}
 		
-		//qDebug() << "QtKCaptureBuffer::process(FrameFormat is " << tFrame.pixelFormat() << " )";
+        tFrame.unmap();
+		m_mutexA.unlock();	
+		
+		emit imageCaptured(cnt++, this->m_lastFrame);				
+		return true;
+
 	}
-
 	m_mutexA.unlock();
-
-    return true;
+    return false;
 }
 
 QImage::Format QtKCaptureBuffer::getQImageFormat(QVideoFrame::PixelFormat format)
@@ -105,3 +129,4 @@ QImage::Format QtKCaptureBuffer::getQImageFormat(QVideoFrame::PixelFormat format
 
 	return QImage::Format_RGB888;
 }
+
