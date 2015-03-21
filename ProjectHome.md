@@ -1,0 +1,1 @@
+VEJAM is an opensouce project that makes posible to get remote webcam images in a HTML5 browser.
