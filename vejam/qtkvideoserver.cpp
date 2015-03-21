@@ -61,6 +61,8 @@ void  QtkVideoServer::setCamera(const QByteArray &cameraDevice)
 	
     this->m_viewfinder = new QtKCaptureBuffer(this);
 	this->m_viewfinder->setMirrorSetting(this->loadParam(QString("video"),QString("mirror-setting")).toInt());
+	this->m_viewfinder->setWidthScale(this->loadParam(QString("video"),QString("resolucion-x")).toInt());
+	this->m_viewfinder->setScaleMode(this->loadParam(QString("video"),QString("scale-mode")).toInt());
 	connect(this->m_viewfinder, SIGNAL(imageCaptured(int,QImage)), this, SLOT(OnProcessCapturedImage(int,QImage)));
 
     this->m_camera->setViewfinder(this->m_viewfinder);

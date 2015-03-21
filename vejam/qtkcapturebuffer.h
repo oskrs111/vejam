@@ -43,6 +43,8 @@ public:
 	bool present(const QVideoFrame &frame);	
 	void capture();
 	void setMirrorSetting(int mirrorSetting);
+	void setWidthScale(int widthScale);
+	void setScaleMode(int scaleMode);
 
     private:
 	QImage::Format getQImageFormat(QVideoFrame::PixelFormat format);    
@@ -51,6 +53,8 @@ public:
     QMutex m_mutexA;
 	bool m_doCapture;
 	int m_mirrorSetting;
+	int m_widthScale;
+	int m_scaleMode;
 
 public slots:
 	void OnCaptureTimer();

@@ -281,8 +281,8 @@ void MainWindow::setDefaultParameters()
     this->saveParam(QString("conexion"),QString("webkit-port"),QString("40001"));
     this->saveParam(QString("conexion"),QString("mjpeg-port"),QString("50001"));
 	this->saveParam(QString("conexion"),QString("mjpeg-uri"),QString("/stream.html"));
-    this->saveParam(QString("video"),QString("resolucion-x"),QString("320"));
-    this->saveParam(QString("video"),QString("resolucion-y"),QString("240"));
+    this->saveParam(QString("video"),QString("resolucion-x"),QString("320"));    
+	this->saveParam(QString("video"),QString("scale-mode"),QString("0"));
     this->saveParam(QString("video"),QString("calidad"),QString("-1"));
     this->saveParam(QString("video"),QString("framerate-max"),QString("6"));    
 	this->saveParam(QString("video"),QString("mirror-setting"),QString("0"));    

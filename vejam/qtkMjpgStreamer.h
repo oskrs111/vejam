@@ -8,7 +8,7 @@
 //OSLL: This macro is taken from 'httpd.h" header from output_http pluguin that is part of mjpeg-streamer application.
 //OSLL: mjpeg-streamer is Tom Stöveken Copyright (C).
 
-#define STD_HEADER "Connection: keep-alive\r\n" \
+#define STD_HEADER "Connection: close\r\n" \
                    "Server: QtkMjpgStreamer-1.0\r\n" \
                    "Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\r\n" \
                    "Pragma: no-cache\r\n" \

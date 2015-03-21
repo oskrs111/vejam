@@ -8,6 +8,8 @@ QtKCaptureBuffer::QtKCaptureBuffer(QObject *parent):
     this->m_doCapture = false;
 	this->m_captureTimeout = 0;
 	this->m_mirrorSetting = 0;
+	this->m_widthScale = 0;
+	this->m_scaleMode = 0;
 }
 
 QtKCaptureBuffer::~QtKCaptureBuffer()
@@ -76,6 +78,17 @@ void QtKCaptureBuffer::setMirrorSetting(int mirrorSetting)
 	this->m_mirrorSetting = mirrorSetting;
 }
 
+void QtKCaptureBuffer::setWidthScale(int widthScale)
+{
+	this->m_widthScale = widthScale;
+}
+
+void QtKCaptureBuffer::setScaleMode(int scaleMode)
+{
+	this->m_scaleMode = scaleMode;
+	if(this->m_scaleMode > 1 ) this->m_scaleMode = 1;
+}
+
 bool QtKCaptureBuffer::present(const QVideoFrame &frame)
 //qtmultimedia\src\plugins\directshow\camera\dscamerasession.cpp
 {
@@ -87,23 +100,24 @@ bool QtKCaptureBuffer::present(const QVideoFrame &frame)
     if(tFrame.map(QAbstractVideoBuffer::ReadOnly))
     {	
 		this->m_doCapture = false;
+		if(this->m_widthScale == 0) this->m_widthScale = frame.width();
 		switch(this->m_mirrorSetting)
 		{
 			case mirrorVertical:
-				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(0, 1);
+				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(0, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
 				break;
 
 			case mirrorHorizontal:
-				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0);
+				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 0).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
 				break;
 
 			case mirrorAll:
-				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 1);
+				this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).mirrored(1, 1).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
 				break;
 
 			case mirrorNone:			
 			default:
-			this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat()));
+			this->m_lastFrame = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), getQImageFormat(tFrame.pixelFormat())).scaledToWidth(this->m_widthScale, (Qt::TransformationMode)this->m_scaleMode);
 			break;
 		}
 		

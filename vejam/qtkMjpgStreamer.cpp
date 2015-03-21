@@ -43,6 +43,7 @@ void QtkMjpgStreamer::OnStreamerRun()
                 if(this->m_videoServer->getServerState() == QCamera::ActiveState)
                 this->setStreamerState(sstServeHeader);
 				this->m_videoServer->Capture();
+				this->m_socket->setSocketOption(QAbstractSocket::LowDelayOption,1);
 				//dump.open(QIODevice::WriteOnly);
 				//qDebug() << "Dump path:" << QFileInfo(dump).absoluteFilePath();
             }
@@ -59,9 +60,11 @@ void QtkMjpgStreamer::OnStreamerRun()
 			//dump.write(this->getHttpHeader());
             this->m_socket->flush();
             this->setStreamerState(sstServeFrameHeader);
+			goto sstServeFrameHeader;
             break;
 
        case sstServeFrameHeader:
+sstServeFrameHeader:
 		    if(this->m_socket->state() != QAbstractSocket::ConnectedState) 
 			{
 				this->setStreamerState(sstConnectionClosed);
@@ -73,33 +76,43 @@ void QtkMjpgStreamer::OnStreamerRun()
                 this->m_frameReady = false;
 				this->m_socket->write(this->getBoundaryHeader());
 				//dump.write(this->getBoundaryHeader());
-				this->m_socket->flush();
+				//this->m_socket->flush();
                 this->m_socket->write(this->getFrameHeader());
 				//dump.write(this->getFrameHeader());
 				this->m_socket->flush();
                 this->setStreamerState(sstServeJpegBytes);				
+				goto sstServeJpegBytes;
             }
             else
             {
+				this->m_videoServer->Capture();
                 break;
             }
             //OSLL: Continues to 'sstServeJpegBytes'
 
        case sstServeJpegBytes:
+sstServeJpegBytes:
 		   	if(this->m_socket->state() != QAbstractSocket::ConnectedState) 
 			{
 				this->setStreamerState(sstConnectionClosed);
 				break;
 			}
+			
+			if(this->m_socket->bytesToWrite() == 0)
+			{
+				this->m_socket->write(this->m_jpegBytes);				
+				this->m_socket->flush();
+			}
+			else
+			{
+				this->m_videoServer->Capture();
+				break;
+			}
 
-            this->m_socket->write(this->m_jpegBytes);
-			//dump.write(this->m_jpegBytes);
-			this->m_socket->flush();
-			this->m_videoServer->Capture();
             this->setStreamerState(sstFrameRateDelay);
             frameDelay = this->m_frameDelayPreset;
-
             //OSLL: Continues to 'sstFrameRateDelay'
+			break;
 
        case sstFrameRateDelay:
             if(frameDelay == 0)
@@ -109,6 +122,7 @@ void QtkMjpgStreamer::OnStreamerRun()
             else if(frameDelay)
             {
                 frameDelay--;
+				this->m_frameReady = false;
             }
             break;
 
