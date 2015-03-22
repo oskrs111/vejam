@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head> 
+	<script src="jquery.js"></script>
+	<script src="gibberish-aes.js"></script>
+	<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
+    <script>    
+		var toEncrypt = '{"mjpeg-port": "54321","server-ip": "84.79.98.87","streamming-alias": "My Webcam!","streamming-mode": "1","webkit-port": "12345"}';
+		var enc = "U2FsdGVkX18W/P/OWfUv+Ei+Sv2OE8w8iZ3lYK3gMwqy2XYHRkLu4VnlIs6MA339onyVvq8GA0+2Knr85ewiO8+Ycp6oRbGuBTYesaz/iAXBdFP4r5D6cyP3QiLfvZ4rsX6jrw7ANe4nC3E+8IIATSK8r0dyDTBf6jtXZQabkt4pkOsyu/KVgbwziYtipOrB68AsyZRoho7jqQ4xFfYjBg==";		
+//		var enc = "8bLjDqoUb/8GJbEh1zPkgiELI4d1JRw/cTouoww06lE2HPXad7HdNMsO3oA0lz1jNaX3EAMAUmUeElHtfH7PMi4BmzWrnBZu9BSbrpVLwhg81p9vXtCDsANaJShUfCHcQRBMoGvvy1xihFBLFBsuadwmjeiw7cYFW2gzDfHR5ZQvDOXdH/hUYbpC5PaVPsRQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+		var password = "1234";
+		
+		$( document ).ready(function() 
+        { 		
+			GibberishAES.size(128);
+			var enc = GibberishAES.enc(toEncrypt, password);
+			var dec = GibberishAES.dec(enc, password);		
+			$("#result1").html(enc);
+			$("#result2").html(dec);
+						
+			var encrypted = CryptoJS.AES.encrypt(toEncrypt, password);
+			var decrypted = CryptoJS.AES.decrypt(encrypted, password);
+			
+			$("#result3").html(encrypted.toString(CryptoJS.enc.Utf8));
+		
+			
+			
+		});
+		
+	</script>    
+</head>
+<body>
+<p id="result1"></p>
+<p id="result2"></p>
+<p id="result3"></p>
+<p id="result4"></p>
+</body>
+</html>
