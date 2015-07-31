@@ -64,6 +64,8 @@ void MainWindow::syncMachine()
             url += this->loadParam(QString("aplicacion"),QString("username"));            
 			url += "&sourceId=";
             url += this->loadParam(QString("aplicacion"),QString("streamming-id"));
+			url += "&cleanupEnable=";
+            url += this->loadParam(QString("aplicacion"),QString("cleanup-enable"));
             url += "&syncData=";
             url += this->getSyncString();   
 			url += "&syncEncript=1";	//OSLL: 0 = No Encrypt, 1 = AES, 2 = DES.

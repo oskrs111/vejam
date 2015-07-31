@@ -278,6 +278,8 @@ void MainWindow::setDefaultParameters()
 	this->saveParam(QString("aplicacion"),QString("streamming-id"),QString("0")); //1...8
 	this->saveParam(QString("aplicacion"),QString("streamming-alias"),QString("My Webcam!")); //1...8
 	this->saveParam(QString("aplicacion"),QString("server-url"),QString("www.vejam.info/app-gui")); //http://www.vejam.info/app-gui/app-gui-welcome.html
+	this->saveParam(QString("aplicacion"),QString("cleanup-enable"),QString("1"));
+    this->saveParam(QString("aplicacion"),QString("file-log"),QString("0"));
     this->saveParam(QString("conexion"),QString("webkit-port"),QString("40001"));
     this->saveParam(QString("conexion"),QString("mjpeg-port"),QString("50001"));
 	this->saveParam(QString("conexion"),QString("mjpeg-uri"),QString("/stream.html"));
@@ -286,6 +288,15 @@ void MainWindow::setDefaultParameters()
     this->saveParam(QString("video"),QString("calidad"),QString("-1"));
     this->saveParam(QString("video"),QString("framerate-max"),QString("6"));    
 	this->saveParam(QString("video"),QString("mirror-setting"),QString("0"));    
+
+	this->saveParam(QString("video"),QString("osd-enable"),QString("1"));    
+	this->saveParam(QString("video"),QString("osd-x-position"),QString("10"));    
+	this->saveParam(QString("video"),QString("osd-y-position"),QString("10"));    
+	this->saveParam(QString("video"),QString("osd-text-size"),QString("10"));    
+	this->saveParam(QString("video"),QString("osd-text-font"),QString("0"));    
+	this->saveParam(QString("video"),QString("osd-show-title"),QString("1"));    
+	this->saveParam(QString("video"),QString("osd-show-time"),QString("1"));    
+
 	this->saveParam(QString("device"),QString("selected"),QString("1"));	//Indica la camara per defecte.	
     this->fileSave();
 }
