@@ -46,12 +46,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{dde1ca88-203c-476d-a7e9-481be1a0c4de}</UniqueIdentifier>
+      <UniqueIdentifier>{da7294b0-6ad0-4ac7-8b4d-826de36ff9a3}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{f606d8ad-8c37-43a5-8d9e-f69a2a80b79c}</UniqueIdentifier>
+      <UniqueIdentifier>{f6f45e8b-eb35-422c-a05f-92cc9126e0c6}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -66,19 +66,19 @@
     <ClCompile Include="mainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qtkHttpServer.cpp">
+    <ClCompile Include="qtkVideoServer\qtkCaptureBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qtkMjpgStreamer.cpp">
+    <ClCompile Include="qtkHttpServer\qtkHttpServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qtkapplicationparameters.cpp">
+    <ClCompile Include="qtkHttpServer\qtkMjpgStreamer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qtkcapturebuffer.cpp">
+    <ClCompile Include="qtkVideoServer\qtkVideoServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qtkvideoserver.cpp">
+    <ClCompile Include="qtkApplicationParameters\qtkapplicationparameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="qtkwebsockserver.cpp">
@@ -96,6 +96,12 @@
     <ClCompile Include="Debug\moc_mainwindow.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Release\moc_qtkCaptureBuffer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_qtkCaptureBuffer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
     <ClCompile Include="Release\moc_qtkHttpServer.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
@@ -108,22 +114,16 @@
     <ClCompile Include="Debug\moc_qtkMjpgStreamer.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Release\moc_qtkVideoServer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_qtkVideoServer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
     <ClCompile Include="Release\moc_qtkapplicationparameters.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="Debug\moc_qtkapplicationparameters.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_qtkcapturebuffer.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_qtkcapturebuffer.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_qtkvideoserver.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_qtkvideoserver.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Release\moc_qtkwebsockserver.cpp">
@@ -143,19 +143,19 @@
     <CustomBuild Include="mainwindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qtkHttpServer.h">
+    <CustomBuild Include="qtkVideoServer\qtkCaptureBuffer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qtkMjpgStreamer.h">
+    <CustomBuild Include="qtkHttpServer\qtkHttpServer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qtkapplicationparameters.h">
+    <CustomBuild Include="qtkHttpServer\qtkMjpgStreamer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qtkcapturebuffer.h">
+    <CustomBuild Include="qtkVideoServer\qtkVideoServer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qtkvideoserver.h">
+    <CustomBuild Include="qtkApplicationParameters\qtkapplicationparameters.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="qtkwebsockserver.h">
@@ -210,8 +210,6 @@
     <None Include="img\vejam_toolbar_h48.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="icon1.ico" />
-    <None Include="vejam_toolbar_h48.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_loadingdialog.h">
@@ -220,11 +218,5 @@
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource3.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="vejam3.rc" />
   </ItemGroup>
 </Project>

@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 #include "loadingdialog.h"
-#include "QtkHttpServer.h"
-#include "qtkvideoserver.h"
+#include "qtkHttpServer/qtkHttpServer.h"
+#include "qtkVideoServer/qtkvideoserver.h"
 #include "qtkwebsockserver.h"
 #include "qtkapplicationparameters.h"
 

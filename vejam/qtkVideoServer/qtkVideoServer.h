@@ -6,7 +6,7 @@
 #include <QCameraViewfinder>
 #include <QImageEncoderSettings>
 #include "qtkcapturebuffer.h"
-#include "qtkapplicationparameters.h"
+#include "qtkapplicationparameters.h"   //OSLL: Add global include path...
 
 class QtkVideoServer : public QObject
 {

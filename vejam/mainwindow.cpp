@@ -84,11 +84,11 @@ MainWindow::MainWindow(QWidget *parent) :
     if(this->m_appParameters->fileLoad(false))
     {      
 		this->setDefaultParameters();
-		 QMessageBox msgBox;  
+		 QMessageBox msgBox(this);  
 		 QString msg = "No se ha encontrado vejam.cfg!\r\nEstableciendo configuración por defecto.\r\n\r\n";
 		 msg += "vejam.cfg not found!\r\nSetting default configuration.";
          msgBox.setText(msg);
-		 msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
+		 //msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
          msgBox.exec();
     }
 
@@ -99,11 +99,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(this->m_videoServer->loadAvaliableCameras())
 	{
-		QMessageBox msgBox;
+		QMessageBox msgBox(this);
 		QString msg = "No hay camaras disponibles?\r\n\r\n";
 		msg = "No cameras avaliable?";
 		msgBox.setText(msg);
-		msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
+		//msgBox.setWindowIcon(QIcon(QPixmap(":/png/img/vejam_toolbar_h48.png")));
 		msgBox.exec();
 	}
 	else

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vejam", "vejam.vcxproj", "{9F6832A0-993B-3116-8283-E0870E301E12}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vejam", "vejam.vcxproj", "{AB7A6145-564D-3790-8126-893978037B77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9F6832A0-993B-3116-8283-E0870E301E12}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9F6832A0-993B-3116-8283-E0870E301E12}.Debug|Win32.Build.0 = Debug|Win32
-		{9F6832A0-993B-3116-8283-E0870E301E12}.Release|Win32.ActiveCfg = Release|Win32
-		{9F6832A0-993B-3116-8283-E0870E301E12}.Release|Win32.Build.0 = Release|Win32
+		{AB7A6145-564D-3790-8126-893978037B77}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AB7A6145-564D-3790-8126-893978037B77}.Debug|Win32.Build.0 = Debug|Win32
+		{AB7A6145-564D-3790-8126-893978037B77}.Release|Win32.ActiveCfg = Release|Win32
+		{AB7A6145-564D-3790-8126-893978037B77}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
