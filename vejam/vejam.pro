@@ -38,7 +38,9 @@ SOURCES += main.cpp\
     qtkVideoServer/qtkCaptureBuffer.cpp \
     qtkVideoServer/qtkVideoServer.cpp \
     qtkHttpServer/qtkHttpServer.cpp \
-    qtkHttpServer/qtkMjpgStreamer.cpp
+    qtkHttpServer/qtkMjpgStreamer.cpp \
+    qtkHttpServer/qtkRtpCommand_.cpp \
+    qtkHttpServer/qtkJsRpcServer.cpp
 
 HEADERS  += mainwindow.h \
     qtkwebsockserver.h \
@@ -47,7 +49,9 @@ HEADERS  += mainwindow.h \
     qtkVideoServer/qtkCaptureBuffer.h \
     qtkVideoServer/qtkVideoServer.h \
     qtkHttpServer/qtkMjpgStreamer.h \
-    qtkHttpServer/qtkHttpServer.h
+    qtkHttpServer/qtkHttpServer.h \
+    qtkHttpServer/qtkRtpCommand_.h \
+    qtkHttpServer/qtkJsRpcServer.h
 
 FORMS    += mainwindow.ui \
     loadingdialog.ui
